@@ -1,0 +1,276 @@
+Document: STXT Tutorial
+
+	Metadata:
+		Author: ChatGPT 5.2
+		Last modif: 2026-01-11
+		
+	Header: @STXT@ Tutorial
+	
+	Subheader: 1. ¿Qué es @STXT@?
+	
+	Content >>
+		**@STXT@ (Semantic Text)** es un lenguaje textual jerárquico y semántico,
+		diseñado para ser **Human-First**:
+		
+		* Fácil de leer y escribir por personas.
+		* Trivial de parsear por máquinas.
+		* Seguro por diseño.
+		
+		@STXT@ permite representar documentos estructurados mediante:
+		
+		* **Nodos inline** (`:`) para valores simples.
+		* **Bloques de texto literal** (`>>`) para contenido multilínea.
+		* **Indentación** para expresar jerarquía.
+		* **Namespaces** para separar semántica y permitir validación externa.
+		
+		La sintaxis base es mínima. La semántica avanzada se añade mediante:
+		
+		* `@stxt.schema` — validación formal y exhaustiva.
+		* `@stxt.template` — validación simplificada y orientada a prototipos.
+		
+	Subheader: 2. Ejemplo básico: ficha de un libro
+	
+	Content >>
+		Veamos un ejemplo sencillo de un documento @STXT@ que describe un libro.
+		No hay validación todavía: es sólo lenguaje @STXT@. Además, no tiene
+		ningún namespace asociado.
+		
+	Code >>
+		Book:
+			Title: Arquitectura de software moderna
+			Authors:
+				Author: María Pérez
+				Author: Juan García
+			ISBN: 978-84-123456-7-8
+			Publisher: ACME Editorial
+			Published: 2025-10-01
+			Summary >>
+				Este libro ofrece una visión práctica de patrones y buenas prácticas
+				para diseñar sistemas distribuidos y escalables.
+			Chapter: Introducción a la arquitectura
+				Content >>
+					En este capítulo presentamos conceptos básicos:
+					monolitos, microservicios y criterios de diseño.
+			Chapter: Comunicación entre servicios
+				Content >>
+					Se describen protocolos, mensajería y patrones de integración.
+	Content >>
+		Observaciones:
+		
+		* La jerarquía se define **únicamente por indentación**.
+		* `Summary >>` y `Content >>` son bloques de texto literal: su contenido no se interpreta como @STXT@.
+		* No existe ningún tipo implícito: todo es texto mientras no se valide.
+		
+	Subheader: 3. Uso de namespaces
+	
+	Assert >>
+		Los namespaces permiten agrupar nodos en categorías. Además, si se define un
+		namespace para un nodo, **los nodos hijos heredan el namespace del padre**, a no ser que uno de ellos
+		lo redefina.
+		
+	Content >>
+		Ejemplo de un documento con namespace:
+		
+	Code >>
+		Book ***(com.acme.book)***:
+			Title: Arquitectura de software moderna
+			Authors:
+				Author: María Pérez
+				Author: Juan García
+			ISBN: 978-84-123456-7-8
+	
+	Content >>
+		En este ejemplo vemos el nodo `Book` que pertenece al namespace `com.acme.book`.
+		Además, también vemos nodos `Title`, `Authors`, `Author` y `ISBN`, que al ser
+		descendientes de `Book` también heredan el namespace `com.acme.book`.
+		
+		Reglas clave:
+		
+		* El namespace se hereda por los nodos hijos.
+		* Un nodo puede redefinir su namespace si es necesario.
+		* El lenguaje @STXT@ **no valida** el namespace, sólo define las reglas de 
+		  propagación.
+		
+	Subsubheader: 3.1 Namespaces especiales con `@`
+	Content >>
+		Los namespace pueden empezar o no con `@`. Esto nos indica que son 
+		**namespaces especiales o reservados**. Por ejemplo, tanto los plantillas
+		como los esquemas empiezan por `@`. 
+		
+		Esto es sólo una indicación semántica, pero el funcionamiento es el mismo.
+	
+	Subsubheader: 3.2 Validación de documentos
+	
+	Content >>
+		Para poder validar semánticamente un documento, debe asociarse a un **namespace**.
+		Una vez tiene el namespace, se usa un esquema (`@stxt.schema`)
+		o template (`@stxt.template`) para validarlo. Las validaciones son extensiones
+		al lenguaje base, que los parsers pueden o no implementar.
+		
+	Assert >>
+		Para validar un documento **es necesario que pertenezca a un namespace**.\\
+		Por otro lado, un documento con namespace no es obligatorio validarlo.
+			
+	Subheader: 4. Validación con Plantillas
+	
+	Content >>
+		Las **Plantillas** permiten definir reglas estructurales y de tipo
+		de forma compacta. Son ideales para prototipos y documentación viva.
+		
+		Un template es un documento @STXT@ cuyo namespace es `@stxt.template`.
+		
+	Subsubheader: 4.1 Template para libros
+	
+	Code >>
+		Template (@stxt.template): com.acme.book
+			Description: Template para fichas de libros editoriales
+			Structure >>
+				Book:
+					Title: (1)
+					Authors: (1)
+						Author: (+)
+					ISBN: (1)
+					Publisher: (?)
+					Published: (?) DATE
+					Summary: (?) TEXT
+					Chapter: (+)
+						Content: (?) TEXT
+							
+	Content >>
+		Qué define este template:
+		
+		* `Book` es el nodo raíz esperado.
+		* `Title`, `ISBN` y `Authors` son obligatorios (`(1)`).
+		* `Author` puede repetirse y al menos debe haber uno (`(+)`).
+		* `Published` debe tener formato `DATE`.
+		* `Summary` y `Content` son bloques de texto (`TEXT`).
+		* Al menos debe haber un `Chapter`.
+		
+	Subsubheader: 4.2 Formas permitidas para la numeración
+	
+	Content >>
+		
+		| Forma      | Significado                  |
+		|------------|------------------------------|
+		| `num`      | Exactamente `num`.           |
+		| `*`        | Cualquier número (`0..∞`).   |
+		| `+`        | Una o más (`1..∞`).          |
+		| `?`        | Cero o una (`0..1`).         |
+		| `num+`     | `num` o más (`num..∞`).      |
+		| `num-`     | Hasta `num` (`0..num`).      |
+		| `min,max`  | Entre `min` y `max`.         |
+	
+	Subsubheader: 4.3 Aplicación del template
+	
+	Content >>
+		Un validador que soporte plantillas debe:
+		
+		* Verificar que los nodos existen.
+		* Comprobar cardinalidades.
+		* Validar tipos básicos (número, fecha, boolean, texto).
+		
+		El lenguaje @STXT@ **no cambia**: el template se aplica sobre el árbol ya parseado.
+		Dependiendo del parser, puede validar al mismo tiempo que parsea el contenido. 
+		
+		
+	Subheader: 5. Validación con Schemas
+	
+	Content >>
+		Los **Schemas** proporcionan la misma información que un template,
+		pero de forma más explícita y formal.
+		
+		Un schema:
+		
+		* Es un documento @STXT@ con namespace `@stxt.schema`.
+		* Define nodos, tipos y cardinalidades por separado.
+		* Es la representación “canónica” de validación.
+		
+	Subsubheader: 5.1 Schema equivalente al template
+	
+	Code >>
+		Schema (@stxt.schema): com.acme.book
+			Node: Book
+				Type: GROUP
+				Children:
+					Child: Title
+						Min: 1
+						Max: 1
+					Child: Authors
+						Min: 1
+						Max: 1
+					Child: ISBN
+						Min: 1
+						Max: 1
+					Child: Publisher
+						Max: 1
+					Child: Published
+						Max: 1
+					Child: Summary
+						Max: 1
+					Child: Chapters
+						Max: 1
+						
+			Node: Authors
+				Children:
+					Child: Author
+						Min: 1
+						
+			Node: Chapters
+				Children:
+					Child: Chapter
+						Min: 1
+						
+			Node: Chapter
+				Children:
+					Child: Content
+						Max: 1
+						
+			Node: Title
+			Node: Author
+			Node: ISBN
+			Node: Publisher
+			Node: Published
+				Type: DATE
+			Node: Summary
+				Type: TEXT
+			Node: Content
+				Type: TEXT
+				
+	Content confirms >>
+		* El schema es más verboso, pero más explícito.
+		* Un template puede compilarse automáticamente a esta forma.
+		* Un validador **DEBERÍA** priorizar schema frente a template si ambos existen.
+		
+	Subheader: 6. Documento final validable
+	
+	Content >>
+		Documento @STXT@ completo que puede validarse con el template o el schema anterior:
+		
+	Code >>
+		Book (@com.acme.book):
+			Title: Arquitectura de software moderna
+			Authors:
+				Author: María Pérez
+				Author: Juan García
+			ISBN: 978-84-123456-7-8
+			Published: 2025-10-01
+			Summary: Una introducción práctica a la arquitectura de sistemas modernos.
+			Chapter: Introducción
+				Content >>
+					Conceptos básicos y objetivos del libro.
+						
+	Content >>
+		Este documento:
+		
+		* Es @STXT@ válido.
+		* Cumple el template `com.acme.book`.
+		* Cumple el schema `com.acme.book`.
+		
+	Subheader: 7. Buenas prácticas
+	
+	Content >>
+		* Usar bloques `>>` para texto largo o literal.
+		* Mantener indentación consistente (usar espacios o tabuladores, pero no mezclarlos).
+		* Usar plantillas para iterar rápido o tener una visión lo más parecida posible a como son los documentos.
+		* Usar esquemas cuando se necesite una descripción más formal de los campos
+		

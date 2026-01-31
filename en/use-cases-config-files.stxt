@@ -1,0 +1,275 @@
+Document (dev.stxt.namespace):Use cases — Configuration files
+
+	Metadata:
+		Author: ChatGPT 5.2
+		Last modif: 2026-01-11
+		
+	Header: Use cases — Configuration files
+	
+	Content >>
+		Configuration files often start out simple…
+		and end up turning into a fragile mix of:
+		
+		* data,
+		* implicit conventions,
+		* human comments,
+		* and “memorized” logic.
+		
+	Assert >>
+		@STXT@ is especially designed for this friction point:
+		**human-readable**, **structured**, and **validatable** configuration without
+		turning into a programming language.
+		
+	Subheader: What kind of configurations
+	
+	Content >>
+		Common examples where @STXT@ fits well:
+		
+		* Application configuration (server, ports, flags, limits).
+		* Per-environment configuration (dev / staging / prod).
+		* Pipelines and jobs.
+		* Feature flags.
+		* Service configuration (timeouts, retries, endpoints).
+		* “Documented” configuration (long comments, context).
+		
+	Subheader: Common problems with other formats
+	
+	Content >>
+		In practice, teams run into:
+		
+		* JSON:
+		  * Strict but not very human.
+		  * No real comments.
+		  * Hard to maintain as it grows.
+		
+		* YAML:
+		  * More human, but fragile with indentation.
+		  * Too many equivalent ways to express the same thing.
+		  * Complex parsers and surprising behavior.
+		
+		* INI / properties:
+		  * Flat, with no real hierarchy.
+		  * Implicit types and ad-hoc rules.
+		
+		* XML:
+		  * Verbose.
+		  * Not very friendly for manual editing.
+		
+		@STXT@ aims for a different balance:
+		
+		* Minimal syntax.
+		* Clear hierarchy via indentation.
+		* Literal text when needed.
+		* Optional validation, not mandatory.
+		
+	Subheader: Example 1 — Server configuration
+	
+	Content >>
+		Human-readable, hand-editable, and structured configuration.
+		
+	Code >>
+		Server Config (@com.acme.server):
+			Name: api-gateway
+			Environment: production
+			
+			Network:
+				Host: 0.0.0.0
+				Port: 8080
+				Public url: https://api.acme.com
+			
+			Threads:
+				Min: 8
+				Max: 64
+			
+			Timeouts:
+				Read ms: 5000
+				Write ms: 5000
+			
+			Logging:
+				Level: INFO
+				Format: json
+			
+			Features:
+				Feature:
+					Name: experimental-cache
+					Enabled: false
+				Feature:
+					Name: audit-logging
+					Enabled: true
+			
+			Description >>
+				Main configuration of the API gateway.
+				This file is versioned in Git and deployed along
+				with the application.
+				
+				Critical changes must go through review.
+	
+	Subheader: What @STXT@ adds here
+	
+	Content >>
+		* Node names provide clear semantics.
+		* The hierarchy “shows” itself without thinking.
+		* Explanatory text lives alongside the configuration (`Description >>`).
+		* There are no magic keys or implicit structures.
+		
+	Subheader: Example 2 — Per-environment configuration
+	
+	Content >>
+		Same format, different environments, without duplicating structure.
+		
+	Code >>
+		Application Config (@com.acme.app):
+			App name: Billing
+			
+			Environments:
+				Environment:
+					Name: dev
+					Database:
+						Url: jdbc:postgresql://localhost/dev
+						Max connections: 5
+					Debug: true
+					
+				Environment:
+					Name: staging
+					Database:
+						Url: jdbc:postgresql://staging/db
+						Max connections: 10
+					Debug: false
+					
+				Environment:
+					Name: prod
+					Database:
+						Url: jdbc:postgresql://prod/db
+						Max connections: 30
+					Debug: false
+	
+	Subheader: Advantages over “copy and paste”
+	
+	Content >>
+		* The structure is always the same.
+		* It’s easy to detect differences between environments with `diff`.
+		* You can validate that all environments have the same fields.
+		
+	Subheader: Example 3 — Feature flags
+	
+	Content >>
+		A classic case where data and explanatory text coexist.
+		
+	Code >>
+		Feature Flags (@com.acme.features):
+			Feature:
+				Key: new-checkout
+				Enabled: false
+				Owner: Payments
+				Description >>
+					New checkout flow.
+					Enable progressively per environment.
+					
+			Feature:
+				Key: rate-limit-v2
+				Enabled: true
+				Owner: Platform
+				Description >>
+					New rate limiting system.
+					Replaces the previous version based on filters.
+	
+	Subheader: Validation with @stxt.template
+	
+	Content >>
+		In configuration it’s very common to want to:
+		
+		* Avoid misspelled fields.
+		* Control types (numbers, booleans, dates).
+		* Restrict possible values (ENUM).
+		
+	Code >>
+		Template (@stxt.template): com.acme.server
+			Description: API server configuration
+			Structure >>
+				Server Config:
+					Name: (1)
+					Environment: (1) ENUM [dev, staging, production]
+					
+					Network: (1)
+						Host: (1)
+						Port: (1) INTEGER
+						Public url: (?)
+					
+					Threads: (?)
+						Min: (1) NATURAL
+						Max: (1) NATURAL
+					
+					Timeouts: (?)
+						Read ms: (?) NATURAL
+						Write ms: (?) NATURAL
+					
+					Logging: (?)
+						Level: (1) ENUM [DEBUG, INFO, WARN, ERROR]
+						Format: (?) ENUM [text, json]
+					
+					Features: (?)
+						Feature: (*)
+							Name: (1)
+							Enabled: (1) BOOLEAN
+					
+					Description: (?) TEXT
+	
+	Content >>
+		This template:
+		
+		* Prevents typos (`Port` vs `Ports`).
+		* Guarantees basic types.
+		* Keeps flexibility (many fields are still optional).
+		
+	Subheader: Validation with @stxt.schema
+	
+	Content >>
+		When configuration becomes a contract between systems:
+		
+		* agents,
+		* external validators,
+		* automated deployments,
+		
+		a schema provides full and explicit control.
+		
+		In practice:
+		
+		* The template is designed (more readable).
+		* It is compiled to a schema.
+		* The runtime validates against the schema.
+		
+	Subheader: Conceptual comparison
+	
+	Content >>
+		@STXT@ for configuration sits between:
+		
+		* JSON → too rigid and not very human.
+		* YAML → human but ambiguous.
+		* DSL languages → powerful, but dangerous.
+		
+		STXT:
+		
+		* Executes nothing.
+		* Evaluates no expressions.
+		* Includes no external files.
+		
+		It only describes **structure + data + text**.
+		
+	Subheader: Usage recommendations
+	
+	Content >>
+		* Use stable and descriptive node names.
+		* Group by domains (`Network`, `Logging`, `Features`).
+		* Use `ENUM` for environments, levels, states.
+		* Document important decisions with `>>` blocks.
+		* Keep validation as an additional layer, not as an initial requirement.
+		
+	Subheader: Summary
+	
+	Content >>
+		Configuration files are a natural use case for @STXT@:
+		
+		* Humans can read and modify them with confidence.
+		* Machines can validate and process them unambiguously.
+		* The format scales from “simple config” to strict contracts
+		  without changing languages.

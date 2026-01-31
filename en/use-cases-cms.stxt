@@ -1,0 +1,217 @@
+Document (dev.stxt.namespace):CMS (Content Management Systems)
+
+	Metadata:
+		Author: ChatGPT 5.2
+		Last modif: 2026-01-11
+		
+	Header: CMS (Content Management Systems)
+
+	Content >>
+		Traditional CMSs often mix too many responsibilities:
+		
+		* data model,
+		* editing interface,
+		* validation rules,
+		* and final presentation.
+
+	Assert >>		
+		@STXT@ proposes separating these layers, using a **documental format**
+		that is stable, readable, and reusable outside of any specific tool.
+		
+	Subheader: What we mean by CMS
+	
+	Content >>
+		In this context, a CMS is:
+		
+		* A system that manages structured content.
+		* With human editing.
+		* With multiple outputs (web, feeds, APIs).
+		* With versioning and review.
+		
+		Examples:
+		
+		* Corporate websites.
+		* Blogs and content portals.
+		* Living documentation.
+		* Catalogs and product sheets.
+		
+	Subheader: Common problems in classic CMSs
+	
+	Content >>
+		Common patterns:
+		
+		* Rigid models that are hard to evolve.
+		* Editing coupled to a specific UI.
+		* Difficulty versioning and reviewing changes.
+		* Limited or proprietary exports.
+		* Strong dependency on the database.
+		
+		Over time, the content becomes “trapped”.
+		
+	Subheader: @STXT@ approach for CMS
+	
+	Content >>
+		@STXT@ fits as the **source format** of the content:
+		
+		* The CMS does not define the document format.
+		* The CMS interprets STXT and provides tools around it.
+		* The content lives in files, not in the tool.
+		
+		This enables:
+		
+		* Decoupled CMS.
+		* Portable content.
+		* Interchangeable renderers.
+		
+	Subheader: Example 1 — Web page
+	
+	Content >>
+		Typical page with metadata, sections, and free-form content.
+		
+	Code >>
+		Page (@com.acme.cms.page):
+			Title: About STXT
+			Slug: about-stxt
+			Language: es
+			Status: Published
+			Layout: default
+			
+			SEO:
+				Title: STXT — Human First Language
+				Description: Readable and validatable textual format
+				Keywords:
+					Keyword: stxt
+					Keyword: documents
+					Keyword: formats
+			
+			Header >>
+				## STXT
+				
+				Semantic textual language, readable by humans
+				and reliable for machines.
+			
+			Content >>
+				### What is STXT?
+				
+				STXT is a language designed to write documents
+				that can be read and processed without friction.
+				
+				### Principles
+				
+				- Human First
+				- Minimal syntax
+				- Optional validation
+			
+			Footer >>
+				Last update: January 2026
+	
+	Subheader: Example 2 — Reusable components
+	
+	Content >>
+		A CMS usually works with blocks or components.
+		
+	Code >>
+		Page (@com.acme.cms.page):
+			Title: Home
+			Slug: index
+			
+			Blocks:
+				Block:
+					Type: hero
+					Title: STXT
+					Subtitle: Built for humans. Reliable for machines.
+				Block:
+					Type: features
+					Items:
+						Item: Readable
+						Item: Safe
+						Item: Validatable
+				Block:
+					Type: call-to-action
+					Label: Read the tutorial
+					Target: /lang-tutorial
+	
+	Subheader: Key advantage: visible structure
+	
+	Content >>
+		* An editor sees the structure without a graphical interface.
+		* A developer can map blocks easily.
+		* A renderer can transform each `Block` according to its `Type`.
+		
+	Subheader: Validation with @stxt.template
+	
+	Content >>
+		A template prevents incomplete or inconsistent pages.
+		
+	Code >>
+		Template (@stxt.template): com.acme.cms.page
+			Description: Standard CMS page
+			Structure >>
+				Page:
+					Title: (1)
+					Slug: (1)
+					Language: (?) ENUM [es, en, fr]
+					Status: (1) ENUM [Draft, Published, Archived]
+					Layout: (?)
+					
+					SEO: (?)
+						Title: (?)
+						Description: (?)
+						Keywords: (?)
+							Keyword: (+)
+					
+					Header: (?) TEXT
+					Content: (1) TEXT
+					Footer: (?) TEXT
+					
+					Blocks: (?)
+						Block: (*)
+							Type: (1)
+	
+	Content >>
+		This template:
+		
+		* Ensures title, slug, and content.
+		* Controls editorial states.
+		* Allows flexible blocks.
+		
+	Subheader: “Headless” CMS and STXT
+	
+	Content >>
+		In a headless CMS:
+		
+		* STXT is the source of the content.
+		* The CMS exposes an API (JSON, GraphQL).
+		* The front end consumes transformed data.
+		
+		STXT fits well because:
+		
+		* The parser produces a neutral tree.
+		* Transformations are explicit.
+		* The content does not depend on the front end.
+		
+	Subheader: Versioning and review
+	
+	Content >>
+		* Each change is a clear textual diff.
+		* Reviews can be done in Git.
+		* There is no hidden state in a database.
+		
+	Subheader: Recommendations for CMS
+	
+	Content >>
+		* Define a few clear document types.
+		* Use templates for each type.
+		* Keep blocks simple and well named.
+		* Avoid conditional logic in the content.
+		* Keep presentation out of the document.
+		
+	Subheader: Summary
+	
+	Content >>
+		@STXT@ as the basis of a CMS enables:
+		
+		* Portable content.
+		* Clear structure.
+		* Optional validation.
+		* Independence from tools and frameworks.

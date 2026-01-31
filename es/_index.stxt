@@ -1,0 +1,78 @@
+Document: STXT: El Libro
+	SubHeader: @STXT@
+	
+	Link: Introducción
+		Page: index
+		
+	Link: Tutorial
+		Page: lang-tutorial
+	
+#	Link: CLI stxt
+#		Page: lang-cli-stxt
+	
+#	Link: Editor online
+#		Page: lang-online-editor
+	
+#	Link: Herramientas
+#		Page: lang-tools
+	
+	Subheader: Referencia del Lenguaje
+	
+	Link: @STXT@ Documentos
+		Page: stxt-core-ref
+		
+	Link: @STXT@ Esquemas
+		Page: stxt-schema-ref
+		
+	Link: @STXT@ Plantillas
+		Page: stxt-template-ref
+			
+#	Subheader: Transformaciones		
+	
+#	Link: STXT a XML
+#		Page: stxt2xml
+		
+#	Link: STXT a YAML
+#		Page: stxt2yaml
+		
+#	Link: STXT a JSON
+#		Page: stxt2json
+		
+#	Link: STXT a HTML
+#		Page: stxt2html
+		
+#	Link: STXT a PDF
+#		Page: stxt2pdf
+		
+#	Subheader: Migraciones		
+	
+#	Link: XML a STXT
+#		Page: migrate-xml		
+		
+#	Link: YAML a STXT
+#		Page: migrate-yaml		
+		
+	SubHeader: Casos de uso 
+	
+	Link: Documentos Corporativos
+		Page: use-cases-corporate-docs
+		
+	Link: Wikipedia
+		Page: use-cases-wikipedia
+		
+	Link: CMS
+		Page: use-cases-cms
+		
+	Link: Publicaciones
+		Page: use-cases-editorial
+		
+	Link: Ficheros configuración
+		Page: use-cases-config-files
+		
+	Link: RFCs y propuestas técnicas
+		Page: use-cases-rfcs
+		
+	Link: Contratos y acuerdos legales
+		Page: use-cases-contracts
+	
+	

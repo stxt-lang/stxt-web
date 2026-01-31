@@ -1,0 +1,277 @@
+Document: Ficheros de configuración
+
+	Metadata:
+		Author: ChatGPT 5.2
+		Revision: Joan Costa Mombiela
+		Last modif: 2026-01-11
+		
+	Header: Ficheros de configuración
+	
+	Content >>
+		Los ficheros de configuración suelen empezar siendo simples…
+		y acabar convirtiéndose en una mezcla frágil de:
+		
+		* datos,
+		* convenciones implícitas,
+		* comentarios humanos,
+		* y lógica “aprendida de memoria”.
+		
+	Assert >>
+		@STXT@ está especialmente pensado para este punto de fricción:
+		configuración **legible por humanos**, **estructurada**, y **validable** sin
+		convertirse en un lenguaje de programación.
+		
+	Subheader: Qué tipo de configuraciones
+	
+	Content >>
+		Ejemplos habituales donde @STXT@ encaja bien:
+		
+		* Configuración de aplicaciones (server, puertos, flags, límites).
+		* Configuración por entorno (dev / staging / prod).
+		* Pipelines y jobs.
+		* Feature flags.
+		* Configuración de servicios (timeouts, retries, endpoints).
+		* Configuración “documentada” (comentarios largos, contexto).
+		
+	Subheader: Problemas habituales con otros formatos
+	
+	Content >>
+		En la práctica, los equipos se encuentran con:
+		
+		* JSON:
+		  * Estricto pero poco humano.
+		  * Sin comentarios reales.
+		  * Difícil de mantener cuando crece.
+		
+		* YAML:
+		  * Más humano, pero frágil con indentación.
+		  * Demasiadas formas equivalentes de expresar lo mismo.
+		  * Parsers complejos y comportamiento sorprendente.
+		
+		* INI / properties:
+		  * Planos, sin jerarquía real.
+		  * Tipos implícitos y reglas ad-hoc.
+		
+		* XML:
+		  * Verboso.
+		  * Poco amigable para edición manual.
+		
+		@STXT@ busca un equilibrio distinto:
+		
+		* Sintaxis mínima.
+		* Jerarquía clara por indentación.
+		* Texto literal cuando hace falta.
+		* Validación opcional, no obligatoria.
+		
+	Subheader: Ejemplo 1 — Configuración de servidor
+	
+	Content >>
+		Configuración legible, editable a mano y estructurada.
+		
+	Code >>
+		Server Config (@com.acme.server):
+			Name: api-gateway
+			Environment: production
+			
+			Network:
+				Host: 0.0.0.0
+				Port: 8080
+				Public url: https://api.acme.com
+			
+			Threads:
+				Min: 8
+				Max: 64
+			
+			Timeouts:
+				Read ms: 5000
+				Write ms: 5000
+			
+			Logging:
+				Level: INFO
+				Format: json
+			
+			Features:
+				Feature:
+					Name: experimental-cache
+					Enabled: false
+				Feature:
+					Name: audit-logging
+					Enabled: true
+			
+			Description >>
+				Configuración principal del gateway de APIs.
+				Este fichero se versiona en Git y se despliega junto
+				con la aplicación.
+				
+				Cambios críticos deben pasar por revisión.
+	
+	Subheader: Qué aporta aquí @STXT@
+	
+	Content >>
+		* Los nombres de nodos aportan semántica clara.
+		* La jerarquía se “ve” sin pensar.
+		* El texto explicativo vive junto a la configuración (`Description >>`).
+		* No hay claves mágicas ni estructuras implícitas.
+		
+	Subheader: Ejemplo 2 — Configuración por entorno
+	
+	Content >>
+		Mismo formato, distintos entornos, sin duplicar estructura.
+		
+	Code >>
+		Application Config (@com.acme.app):
+			App name: Billing
+			
+			Environments:
+				Environment:
+					Name: dev
+					Database:
+						Url: jdbc:postgresql://localhost/dev
+						Max connections: 5
+					Debug: true
+					
+				Environment:
+					Name: staging
+					Database:
+						Url: jdbc:postgresql://staging/db
+						Max connections: 10
+					Debug: false
+					
+				Environment:
+					Name: prod
+					Database:
+						Url: jdbc:postgresql://prod/db
+						Max connections: 30
+					Debug: false
+	
+	Subheader: Ventajas frente a “copiar y pegar”
+	
+	Content >>
+		* La estructura es siempre la misma.
+		* Es fácil detectar diferencias entre entornos con `diff`.
+		* Se puede validar que todos los entornos tengan los mismos campos.
+		
+	Subheader: Ejemplo 3 — Feature flags
+	
+	Content >>
+		Un caso clásico donde conviven datos y texto explicativo.
+		
+	Code >>
+		Feature Flags (@com.acme.features):
+			Feature:
+				Key: new-checkout
+				Enabled: false
+				Owner: Payments
+				Description >>
+					Nuevo flujo de checkout.
+					Activar progresivamente por entorno.
+					
+			Feature:
+				Key: rate-limit-v2
+				Enabled: true
+				Owner: Platform
+				Description >>
+					Nuevo sistema de rate limiting.
+					Reemplaza la versión anterior basada en filtros.
+	
+	Subheader: Validación con @stxt.template
+	
+	Content >>
+		En configuración es muy común querer:
+		
+		* Evitar campos mal escritos.
+		* Controlar tipos (números, booleanos, fechas).
+		* Limitar valores posibles (ENUM).
+		
+	Code >>
+		Template (@stxt.template): com.acme.server
+			Description: Configuración del servidor API
+			Structure >>
+				Server Config:
+					Name: (1)
+					Environment: (1) ENUM [dev, staging, production]
+					
+					Network: (1)
+						Host: (1)
+						Port: (1) INTEGER
+						Public url: (?)
+					
+					Threads: (?)
+						Min: (1) NATURAL
+						Max: (1) NATURAL
+					
+					Timeouts: (?)
+						Read ms: (?) NATURAL
+						Write ms: (?) NATURAL
+					
+					Logging: (?)
+						Level: (1) ENUM [DEBUG, INFO, WARN, ERROR]
+						Format: (?) ENUM [text, json]
+					
+					Features: (?)
+						Feature: (*)
+							Name: (1)
+							Enabled: (1) BOOLEAN
+					
+					Description: (?) TEXT
+	
+	Content >>
+		Este template:
+		
+		* Evita errores tipográficos (`Port` vs `Ports`).
+		* Garantiza tipos básicos.
+		* Mantiene flexibilidad (muchos campos siguen siendo opcionales).
+		
+	Subheader: Validación con @stxt.schema
+	
+	Content >>
+		Cuando la configuración se convierte en contrato entre sistemas:
+		
+		* agentes,
+		* validadores externos,
+		* despliegues automatizados,
+		
+		un schema ofrece control total y explícito.
+		
+		En la práctica:
+		
+		* Se diseña el template (más legible).
+		* Se compila a schema.
+		* El runtime valida contra el schema.
+		
+	Subheader: Comparación conceptual
+	
+	Content >>
+		@STXT@ para configuración se sitúa entre:
+		
+		* JSON → demasiado rígido y poco humano.
+		* YAML → humano pero ambiguo.
+		* Lenguajes DSL → potentes, pero peligrosos.
+		
+		STXT:
+		
+		* No ejecuta nada.
+		* No evalúa expresiones.
+		* No incluye archivos externos.
+		
+		Solo describe **estructura + datos + texto**.
+		
+	Subheader: Recomendaciones de uso
+	
+	Content >>
+		* Usa nombres de nodos estables y descriptivos.
+		* Agrupa por dominios (`Network`, `Logging`, `Features`).
+		* Usa `ENUM` para entornos, niveles, estados.
+		* Documenta decisiones importantes con bloques `>>`.
+		* Mantén la validación como una capa adicional, no como requisito inicial.
+		
+	Subheader: Resumen
+	
+	Content >>
+		Los ficheros de configuración son un caso natural para @STXT@:
+		
+		* Humanos pueden leerlos y modificarlos con confianza.
+		* Las máquinas pueden validarlos y procesarlos sin ambigüedad.
+		* El formato escala desde “simple config” hasta contratos estrictos
+		  sin cambiar de lenguaje.
+			

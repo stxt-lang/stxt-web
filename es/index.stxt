@@ -1,0 +1,63 @@
+Document: STXT - Built for humans. Reliable for machines.
+	Header: @STXT@: Introducción 
+
+	Assert >>
+		@STXT@ es un lenguaje **Human-First**, donde los documentos 
+		son legibles y expresivos,\\ 
+		y al mismo tiempo fiables para máquinas.
+		
+	Subheader: Documentos
+	
+	Content >>
+		@STXT@ es un formato textual jerárquico y semántico orientado a:
+		
+		* Representar documentos y datos de manera clara.
+		* Ser extremadamente sencillo de leer y escribir.
+		* Ser trivial de parsear en cualquier lenguaje.
+		* Permitir tanto contenido estructurado como texto libre.
+		* Aplicar reglas de contenido mediante `@stxt.schema` o `@stxt.template`.
+	
+		Un documento @STXT@ equilibra la claridad humana con una estructura semántica explícita, ideal para **documentos, wikis y configuraciones**:
+	
+	Code >>
+		***Email***:
+			From: John Smith
+			To: Mery Adams
+			Cc: Keyla Brown
+			Title: Project report
+			***Body Content >>***
+				Hello Mery!
+				The book is finished!
+
+	Subheader: Documentos con namespace y esquemas
+	
+	Content >>
+		@STXT@ permite el uso de namespaces para agrupar documentos.
+		Además, también se pueden definir esquemas o plantillas 
+		para validar el contenido de un documento.
+		
+		Un documento `Email` del namespace `com.example.docs`:
+		
+	Code >>
+		***Email (com.example.docs)***:
+			From: John Smith
+			To: Mery Adams
+			Cc: Keyla Brown
+			Title: Project report
+			Body Content >>
+				Hello Mery!! 
+				The book is finished!!
+	Content >>
+		Y la definición de la plantilla:
+		
+	Code >>
+		***Template (@stxt.template): com.example.docs***
+			Structure >>
+				Email:
+					From: EMAIL
+					To: EMAIL
+					Cc: EMAIL
+					Bcc: EMAIL
+					Title: (?)
+					Body Content: (1) TEXT
+					Metadata (com.google): (?)

@@ -1,0 +1,433 @@
+Document (dev.stxt.namespace):STXT Templates (@stxt.template)
+	Metadata:
+		Author: Joan Costa Mombiela
+		Last modif: 2026-01-07
+		
+	Header: @STXT@ Templates (@stxt.template)
+	
+	Subheader: 1. Introduction
+	
+	Content >>
+		This document defines the specification of the **STXT Template** language, a mechanism to describe semantic rules (structure, types, and cardinalities) applicable to STXT documents.
+		
+		A **template**:
+		
+		* Is an STXT document whose namespace is `@stxt.template`.
+		* Is associated with a **target namespace**, analogous to a schema.
+		* Describes the **expected structure** through a `Structure >>` block with simplified syntax.
+		* Is **information-equivalent** to a schema: a template can be compiled into an `@stxt.schema` document with an equivalent internal representation.
+		
+		Relationship with `@stxt.schema`:
+		
+		* A validator **MAY** support only schemas, only templates, or both.
+		* If both exist (schema and template) for the same target namespace, a conforming validator **SHOULD** prioritize `@stxt.schema` over `@stxt.template`.
+		* STXT core **MUST NOT** impose semantics: templates are an optional layer, after parsing the STXT document.
+		
+	Subheader: 2. Terminology
+	
+	Content >>
+		The key words **"MUST"**, **"MUST NOT"**, **"SHOULD"**, **"SHOULD NOT"**, and **"MAY"** are to be interpreted as described in **RFC 2119**.
+		
+		Terms such as *node*, *indentation*, *namespace*, *inline* and *`>>` block* retain their meaning in *STXT-SPEC*.
+		
+		Additional definitions:
+		
+		* **Target namespace**: the STXT namespace to which the template applies (for example `com.example.docs`).
+		* **Node template**: an entry within the `Structure >>` block that defines a node (and optionally its type/cardinality and its children).
+		* **Type**: a semantic validation label (for example `TEXT`, `DATE`, `ENUM`) equivalent to STXT Schema types.
+		* **Cardinality**: a rule that defines how many times a child node may appear relative to its parent.
+		
+	Subheader: 3. Relationship between STXT and Template
+	
+	Content >>
+		Validation using templates occurs **after** STXT parsing:
+		
+		1. Parsing the STXT document into a hierarchical structure.
+		2. Resolving the logical namespace by inheritance.
+		3. Selecting the template corresponding to the logical namespace.
+		4. Applying template rules (structure, cardinality, types, values).
+		
+		Optionally, a validator **MAY** apply rules during parsing, as long as it is **loosely coupled** to the parser.
+		
+	Subheader: 4. General structure of a Template
+	
+	Content >>
+		A template is a document whose root node is:
+		
+		`Template (@stxt.template): <target_namespace>`
+		
+		The template **MUST** contain a `Structure` node in block form (`>>`).
+		
+	Code >>
+		Template (@stxt.template): com.example.docs
+			Description: Example template
+			Structure >>
+				Document:
+					Title: (1)
+					Body: (1) TEXT
+					
+	Content >>
+		Rules:
+		
+		* The namespace of the template document **MUST** be `@stxt.template`.
+		* `<target_namespace>` **MUST** be a valid namespace according to *STXT-SPEC* (namespaces section).
+		* Only **one active template** may exist per target namespace in a conforming validator (see section 5).
+		
+	Subheader: 5. One template per target namespace
+	
+	Content >>
+		For each logical namespace:
+		
+		* There **MUST NOT** be more than one active template simultaneously.
+		* If multiple templates exist for the same namespace, the validator **SHOULD** have a clear criterion to
+		  decide which one applies, but **MUST NOT** apply several at once.
+		
+	Subheader: 6. `Structure >>` block
+	
+	Content >>
+		The `Structure >>` block defines a **tree of node templates** using indentation, where:
+		
+		* Each non-empty line defines a **node template**.
+		* Indentation defines child nodes (just like STXT), but **within `Structure >>` you are not describing a data document, but an expected structure**.
+		* The indentation rules of the base STXT document apply to the template document (outside the block) and to the `Structure >>` block as literal text; however, the content of `Structure >>` is interpreted by the template system with its own grammar (section 6.2).
+		
+	Subsubheader: 6.1 Recommended style convention
+	
+	Content >>
+		For readability, it is recommended:
+		
+		* 4 spaces per level.
+		* A single space between components.
+		* Maintain consistency in names (use the same capitalization/diacritics as in real documents).
+		
+	Subsubheader: 6.2 Syntax of a `Structure` line
+	
+	Content >>
+		Each line of the `Structure >>` block has the form:
+		
+		`<NodeName> [<NamespaceOverride>] ":" [<RuleSpec>]`
+		
+		where:
+		
+		* `<NodeName>` is the node name (human text; normalized according to STXT-SPEC for comparison).
+		* `<NamespaceOverride>` is optional and has the form `(<namespace>)` or `(@special.namespace)` and defines the **effective** namespace of that node template.
+		* `":"` is mandatory (to avoid visual ambiguity).
+		* `<RuleSpec>` is optional and includes, in this logical order:
+		  1. Optional cardinality (in parentheses).
+		  2. Optional type.
+		  3. Optional values if the type is `ENUM`.
+		
+		Examples:
+		
+	Code >>
+		Title:
+		Title: (1)
+		Body: (1) TEXT
+		Color: (?) ENUM [red, green, blue]
+		Metadata (com.google.html): (0,1)
+		
+	Content >>
+		Notes:
+		
+		* If `<RuleSpec>` is omitted entirely, default cardinality and default type are assumed (sections 7 and 8).
+		* A node template may have children even if it declares the default type `INLINE`. Types that forbid children are defined in section 8.
+		
+	Subsubheader: 6.3 Parsing rules for `Structure >>`
+	
+	Content >>
+		A template parser **MUST**:
+		
+		1. Read the `Structure >>` block as a sequence of lines (already canonicalized by STXT core: right-trim per line).
+		2. Ignore empty lines.
+		3. Compute hierarchy by indentation (same principles as STXT: consecutive indentation, no jumps).
+		4. For each line, parse:
+		   * Node name + optional namespace `(ns)` if present.
+		   * The mandatory `:` character.
+		   * The optional rule specification (`RuleSpec`).
+		
+		A template parser **MUST** fail if a line does not contain `:`.
+		
+	Subheader: 7. Cardinalities
+	
+	Content >>
+		Cardinality applies **per instance of the parent node**, counting only direct children that match by:
+		
+		* Canonical node name (according to STXT-SPEC).
+		* Effective namespace of the node.
+		
+		Cardinality is expressed as an optional token in parentheses: `( ... )`.
+		
+	Subsubheader: 7.1 Allowed forms
+	
+	Content >>
+		Allowed forms:
+		
+		| Form       | Meaning                      |
+		|------------|------------------------------|
+		| `num`      | Exactly `num`.               |
+		| `*`        | Any number (`0..∞`).         |
+		| `+`        | One or more (`1..∞`).        |
+		| `?`        | Zero or one (`0..1`).        |
+		| `num+`     | `num` or more (`num..∞`).    |
+		| `num-`     | Up to `num` (`0..num`).      |
+		| `min,max`  | Between `min` and `max`.     |
+		
+		Rules:
+		
+		* `num`, `min`, and `max` **MUST** be non-negative integers.
+		* In `min,max`, `min <= max` **MUST** hold.
+		* `+` is equivalent to `1+`.
+		* `?` is equivalent to `0,1`.
+		
+	Subsubheader: 7.2 Default cardinality
+	
+	Content >>
+		If no cardinality is specified, the default value is:
+		
+		* `*` (any number).
+		
+	Subheader: 8. Types
+	
+	Content >>
+		Types in templates reuse the set of STXT Schema types, with the same intent: validate the shape of the value and, optionally, its content.
+		
+		The type is specified as a word after the cardinality (if present).
+		
+		Examples:
+		
+	Code >>
+		Date: (1) DATE
+		Body: (1) TEXT
+		Is Public: (1) BOOLEAN
+		
+	Content >>
+	Subsubheader: 8.1 Default type
+	
+	Content >>
+		If the type is omitted, the default type is:
+		
+		* `INLINE`
+		
+	Subsubheader: 8.2 Compatibility with children
+	
+	Content >>
+		A conforming validator **MUST** apply these rules:
+		
+		* **BLOCK-only** types (for example `BLOCK`, `TEXT`, `CODE`, `BASE64`, `JSON`, `XML`, `YAML`, `HTML`, `MARKDOWN`, etc.) are **NOT** compatible with children.
+		  If a node template has children in `Structure >>` and its effective type is BLOCK-only, the template **MUST** be considered invalid.
+		
+		* **GROUP** types (or equivalent structural types without value) **DO** allow children.
+		
+		* INLINE types (for example `INLINE`, `NUMBER`, `DATE`, `BOOLEAN`, `ENUM`, etc.) **MAY** allow children (same philosophy as Schema).
+		  Value validation applies to the node, and structure validation applies to its children.
+		
+	Subsubheader: 8.3 Type set
+	
+	Content >>
+		The recommended type set is the same as *STXT-SCHEMA-SPEC*.
+		
+		A template validator:
+		
+		* **MUST** support at least: `INLINE`, `GROUP`, `BLOCK`, `TEXT`, `NUMBER`, `BOOLEAN`, `DATE`, `ENUM`.
+		* **SHOULD** support the rest of the types defined in STXT Schema (for example `INTEGER`, `NATURAL`, `TIME`, `TIMESTAMP`, `UUID`, `URL`, `EMAIL`, `BASE64`, etc.).
+		
+	Subheader: 9. ENUM and value list
+	
+	Content >>
+		If the type is `ENUM`, the template **MAY** declare a list of allowed values.
+		
+		The value list is specified with brackets `[...]` after the type:
+		
+		`ENUM [value1, value2, value3]`
+		
+	Code >>
+		Color: (1) ENUM [red, green, blue]
+		
+	Content >>
+		Rules:
+		
+		* If the type is `ENUM`, the value list **SHOULD** exist for validation to be useful.
+		* If the type is **NOT** `ENUM`, a `[...]` list **MUST** be considered a template error.
+		* Values are separated by commas `,`.
+		* Trim (spaces/tabs) is applied around each value.
+		* Value comparison **MUST** be **case-sensitive**.
+		* At least one value must exist in the list if `[...]` is present.
+		
+	Subheader: 10. Namespaces within `Structure`
+	
+	Content >>
+		Each line may include an explicit namespace for the node template:
+		
+	Code >>
+		Metadata (com.google.html): (?)
+		
+	Content >>
+		Rules:
+		
+		* If the namespace is omitted, the node template belongs to the template’s **target namespace**.
+		* If `(other.ns)` is specified, that node template belongs to that namespace.
+		* Namespace inheritance in templates **DOES NOT** work as in STXT data documents:
+		  each line declares its effective namespace by:
+		  
+		  * explicit namespace on the line, or
+		  * the template’s target namespace if there is no override.
+		
+		Motivation:
+		
+		* In templates, the `Structure` block describes expected structure and cross-namespace references explicitly.
+		
+	Subheader: 11. “Defined nodes” rules
+	
+	Content >>
+		In templates, a node exists if it appears in `Structure`. Unlike Schema, there is no separate `Node:` section; the structure itself is the definition.
+		
+		Recommended consistency rule:
+		
+		* If a template references cross-namespace nodes, a complete validation system **SHOULD** have the corresponding template or schema for that external namespace if deep validation is desired.
+		* A validator **MAY** validate only cardinality/structure of the target namespace and treat cross-namespace nodes as a “black box”, depending on configuration.
+		
+	Subheader: 12. Compilation to Schema (semantic equivalence)
+	
+	Content >>
+		A template can be compiled into an equivalent schema:
+		
+		* Each `Structure` line generates a `Node` definition for the node template (in the corresponding namespace).
+		* The indentation hierarchy in `Structure` generates `Children/Child` in the schema.
+		* The `( ... )` cardinality in the template translates to:
+		  * `Min` / `Max` in the schema.
+		* The type is copied to `Type`.
+		* `ENUM [a,b]` translates to `Values/Value`.
+		
+		Cardinality translation rules:
+		
+		* `(num)` → `Min=num`, `Max=num`
+		* `(*)` → no `Min`, no `Max`
+		* `(+)` → `Min=1`
+		* `(?)` → `Max=1`
+		* `(num+)` → `Min=num`
+		* `(num-)` → `Max=num`
+		* `(min,max)` → `Min=min`, `Max=max`
+		
+	Subheader: 13. Template errors
+	
+	Content >>
+		A template is invalid if any of these conditions occur:
+		
+		1. The document does not have root `Template (@stxt.template): <target_namespace>`.
+		2. `Structure >>` is missing or `Structure` is not a `>>` block.
+		3. A non-empty line within `Structure` does not contain `:`.
+		4. Malformed cardinality or invalid numbers.
+		5. Unknown type (according to the set of types supported by the validator).
+		6. Use of `[...]` if the type is not `ENUM`.
+		7. BLOCK-only type with children defined in `Structure`.
+		8. Invalid indentation within `Structure` (level jumps, etc.).
+		
+	Subheader: 14. Conformance
+	
+	Content >>
+		A template implementation is conforming if it:
+		
+		* Implements the `Template` and `Structure` grammar of this document.
+		* Applies the cardinality, type, and ENUM rules.
+		* Applies the child-compatibility rules by type.
+		* Rejects invalid templates according to section 13.
+		* Defines a stable template selection criterion (if multiple sources exist), without applying more than one simultaneously per target namespace.
+		
+	Subheader: 15. Meta-template of the `@stxt.template` system itself
+	
+	Content >>
+		This section defines a minimal recommended template to validate documents in the `@stxt.template` namespace.
+		
+	Code >>
+		Template (@stxt.template): @stxt.template
+			Structure >>
+				Template: (1)
+					Description: (0,1) TEXT
+					Structure: (1) BLOCK
+		
+	Content >>
+		Notes:
+		
+		* `Structure` is `BLOCK` because in templates it must be a `>>` block.
+		* `Description` is optional and can be `TEXT`.
+		
+	Subheader: 16. Normative examples
+	
+	Subsubheader: 16.1 Simple template (one namespace)
+	
+	Code >>
+		Template (@stxt.template): com.example.docs
+			Description: Simple template
+			Structure >>
+				Document:
+					Title: (1)
+					Author: (1)
+					Date: (1) DATE
+					Body: (1) TEXT
+					
+	Subsubheader: 16.2 Template with repetition and nested nodes
+	
+	Code >>
+		Template (@stxt.template): com.blog.post
+			Structure >>
+				Post:
+					Title: (1)
+					Slug: (1)
+					Published: (1) BOOLEAN
+					Tags: (?)
+						Tag: (+)
+					Sections: (1)
+						Section: (+)
+							Heading: (1)
+							Content: (1) TEXT
+							
+	Subsubheader: 16.3 Template with ENUM
+	
+	Code >>
+		Template (@stxt.template): com.ui.theme
+			Structure >>
+				Theme:
+					Name: (1)
+					Mode: (1) ENUM [light, dark]
+					Accent: (?) ENUM [blue, green, orange]
+					
+	Subsubheader: 16.4 Cross-namespace (external references)
+	
+	Code >>
+		Template (@stxt.template): com.example.docs
+			Structure >>
+				Document:
+					Metadata (com.google.html): (?)
+					Content: (1) TEXT
+					
+	Content >>
+		In this case:
+		
+		* `Metadata` belongs to `com.google.html`.
+		* Deep validation of `Metadata` will depend on whether a schema/template exists for `com.google.html`.
+		
+	Subheader: 17. Appendix A — Grammar (informal)
+	
+	Code >>
+		TemplateDoc      = "Template" "(" "@stxt.template" ")" ":" NamespaceTarget { TemplateField }
+		TemplateField    = DescriptionField | StructureField
+		DescriptionField = "Description" ":" Text
+		StructureField   = "Structure" ">>" Newline { StructureLine }
+		
+		StructureLine    = Indent NodeSpec Newline
+		NodeSpec         = NodeName [NsOverride] ":" [RuleSpec]
+		NsOverride       = "(" ["@"] Namespace ")"
+		RuleSpec         = [Card] [Type] [EnumValues]
+		
+		Card             = "(" CardToken ")"
+		CardToken        = "*" | "+" | "?" | Num | Num "+" | Num "-" | Num "," Num
+		Type             = IdentUpper
+		EnumValues       = "[" Value { "," Value } "]"
+		
+		NodeName         = Text (up to "(" or ":"), with trim and space compaction
+		NamespaceTarget  = Namespace per STXT-SPEC
+		Namespace        = Ident { "." Ident }
+		Ident            = [a-z0-9]+
+		IdentUpper       = [A-Z0-9_]+  ; recommended uppercase (style)
+		
+	Subheader: 18. End of Document

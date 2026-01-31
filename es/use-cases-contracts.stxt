@@ -1,0 +1,272 @@
+Document: Contratos y acuerdos legales
+
+	Metadata:
+		Author: ChatGPT 5.2
+		Revision: Joan Costa Mombiela
+		Last modif: 2026-01-11
+		
+	Header: Contratos y acuerdos legales
+	
+	Content >>
+		Este apartado **no pretende sustituir** a documentos legales formales,
+		ni a procesos jurídicos existentes.
+		
+		El objetivo es mostrar cómo @STXT@ puede utilizarse como
+		**formato fuente legible y estructurado** para contratos, acuerdos
+		y documentos normativos que:
+		
+		* deben ser leídos y entendidos por personas,
+		* contienen reglas, condiciones y excepciones,
+		* y a menudo conviven con procesos técnicos u operativos.
+		
+	Subheader: Qué tipo de documentos
+	
+	Content >>
+		En este contexto, hablamos de:
+		
+		* Contratos de prestación de servicios.
+		* Acuerdos marco.
+		* SLAs (Service Level Agreements).
+		* NDAs (acuerdos de confidencialidad).
+		* Términos y condiciones.
+		* Políticas internas y normativas corporativas.
+		
+		Muchos de estos documentos:
+		
+		* empiezan siendo “texto legal”,
+		* pero acaban teniendo impacto directo en operaciones, sistemas o personas.
+		
+	Subheader: Problemas habituales en documentos legales
+	
+	Content >>
+		En la práctica:
+		
+		* El texto es largo y denso.
+		* Las condiciones importantes están “enterradas” en párrafos.
+		* Los datos clave (fechas, partes, importes, plazos) no son fácilmente extraíbles.
+		* Versionar cambios es complejo (PDFs, Word).
+		* No hay una separación clara entre:
+		  * contenido normativo,
+		  * datos contractuales,
+		  * y contexto explicativo.
+		
+		@STXT@ no elimina la complejidad legal,
+		pero **ordena el documento**.
+		
+	Subheader: Ejemplo 1 — Acuerdo sencillo
+	
+	Content >>
+		Un acuerdo básico entre dos partes, con texto legal y datos explícitos.
+		
+	Code >>
+		Agreement (@com.acme.legal.contract):
+			Id: AGR-2026-001
+			Title: Acuerdo de prestación de servicios
+			Status: Draft
+			Effective date: 2026-02-01
+			
+			Parties:
+				Party:
+					Name: ACME Corp
+					Role: Proveedor
+				Party:
+					Name: Example Ltd
+					Role: Cliente
+			
+			Purpose >>
+				El presente acuerdo regula la prestación de servicios
+				de soporte técnico entre las partes.
+			
+			Term:
+				Start: 2026-02-01
+				End: 2027-01-31
+			
+			Payment:
+				Fee: 12000
+				Currency: EUR
+				Billing period: Monthly
+			
+			Governing law: ES
+	
+	Subheader: Qué se gana con esta estructura
+	
+	Content >>
+		* Las partes y fechas son datos claros.
+		* El texto legal sigue siendo texto, sin “trocearlo”.
+		* El documento es legible sin conocimientos técnicos.
+		
+	Subheader: Ejemplo 2 — Cláusulas como secciones explícitas
+	
+	Content >>
+		Las cláusulas son un árbol natural.
+		
+	Code >>
+		Agreement (@com.acme.legal.contract):
+			Id: AGR-2026-002
+			Title: Acuerdo de confidencialidad
+			
+			Clauses:
+				Clause:
+					Number: 1
+					Title: Definición de información confidencial
+					Text >>
+						Se entenderá por información confidencial toda aquella
+						información no pública revelada por cualquiera de las partes.
+						
+				Clause:
+					Number: 2
+					Title: Obligaciones de confidencialidad
+					Text >>
+						Las partes se comprometen a no divulgar la información
+						confidencial a terceros sin consentimiento previo.
+						
+				Clause:
+					Number: 3
+					Title: Excepciones
+					Text >>
+						No se considerará confidencial la información que sea
+						de dominio público o exigida por ley.
+	
+	Subheader: Ejemplo 3 — SLA (acuerdo de nivel de servicio)
+	
+	Content >>
+		Un SLA mezcla texto normativo con métricas concretas.
+		
+	Code >>
+		SLA (@com.acme.legal.sla):
+			Service: Plataforma de pagos
+			Effective date: 2026-03-01
+			
+			Availability:
+				Target percentage: 99.9
+				Measurement period: Monthly
+			
+			Response times:
+				Severity:
+					Level: Critical
+					Max response minutes: 30
+				Severity:
+					Level: High
+					Max response minutes: 120
+			
+			Penalties:
+				Penalty:
+					Condition >>
+						Disponibilidad inferior al objetivo mensual.
+					Consequence >>
+						Descuento del 10% en la factura mensual.
+			
+			Legal text >>
+				Las métricas se medirán conforme a los procedimientos
+				descritos en el anexo técnico.
+	
+	Subheader: Ejemplo 4 — Excepciones y condiciones
+	
+	Content >>
+		Los contratos suelen tener reglas con excepciones.
+		
+	Code >>
+		Clause:
+			Title: Limitación de responsabilidad
+			Rule >>
+				La responsabilidad total no excederá el importe anual del contrato.
+			
+			Exceptions:
+				Exception >>
+					Dicha limitación no aplicará en casos de dolo o negligencia grave.
+	
+	Subheader: Ejemplo 5 — Historial y versiones
+	
+	Content >>
+		Los acuerdos evolucionan: enmiendas, renovaciones, revisiones.
+		
+	Code >>
+		Agreement (@com.acme.legal.contract):
+			Id: AGR-2026-003
+			Title: Acuerdo marco
+			
+			History:
+				Revision:
+					Date: 2026-01-15
+					Summary: Versión inicial
+				Revision:
+					Date: 2026-03-10
+					Summary: Actualización de cláusulas de pago
+			
+			Current version: 2
+	
+	Subheader: Ejemplo 6 — Comentarios legales y notas internas
+	
+	Content >>
+		Es habitual separar:
+		
+		* texto contractual,
+		* notas internas,
+		* y observaciones legales.
+		
+	Code >>
+		Clause:
+			Title: Jurisdicción
+			
+			Text >>
+				Las partes se someten a los juzgados de Madrid.
+			
+			Internal notes >>
+				Cláusula estándar aprobada por legal.
+				No modificar sin revisión jurídica.
+	
+	Subheader: Ejemplo 7 — Template mínimo para acuerdos
+	
+	Content >>
+		Un template puede asegurar que un acuerdo tenga
+		los elementos esenciales, sin imponer redacción legal.
+		
+	Code >>
+		Template (@stxt.template): com.acme.legal.contract
+			Description: Estructura básica de contratos
+			Structure >>
+				Agreement:
+					Id: (1)
+					Title: (1)
+					Status: (1) ENUM [Draft, Signed, Terminated]
+					Effective date: (?)
+					
+					Parties: (1)
+						Party: (+)
+							Name: (1)
+							Role: (1)
+					
+					Purpose: (?) TEXT
+					Clauses: (?)
+						Clause: (*)
+							Title: (1)
+							Text: (1) TEXT
+					
+					History: (?)
+	
+	Subheader: Por qué este enfoque resulta útil
+	
+	Content >>
+		Usar STXT como formato fuente para contratos permite:
+		
+		* Documentos legibles sin herramientas especiales.
+		* Estructura clara para revisión humana.
+		* Extracción automática de datos clave.
+		* Versionado y auditoría mediante control de versiones.
+		
+		Sin convertir el contrato en código
+		ni imponer un lenguaje formal artificial.
+		
+	Subheader: Resumen
+	
+	Content >>
+		Contratos y acuerdos legales son, en esencia:
+		
+		* texto normativo,
+		* con estructura repetible,
+		* y datos críticos.
+		
+		@STXT@ permite representarlos de forma clara,
+		legible y estructurada,
+		respetando su naturaleza humana y legal.
+			

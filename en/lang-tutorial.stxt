@@ -1,0 +1,260 @@
+Document: STXT Tutorial
+
+	Metadata:
+		Author: ChatGPT 5.2
+		Last modif: 2026-01-11
+		
+	Header: @STXT@ Tutorial
+	
+	Subheader: 1. What is @STXT@?
+	
+	Content >>
+		**@STXT@ (Semantic Text)** is a hierarchical and semantic textual language,
+		designed to be **Human-First**:
+		
+		* Easy to read and write by people.
+		* Trivial to parse by machines.
+		* Secure by design.
+		
+		@STXT@ allows representing structured documents through:
+		
+		* **Inline nodes** (`:`) for simple values.
+		* **Literal text blocks** (`>>`) for multiline content.
+		* **Indentation** to express hierarchy.
+		* **Namespaces** to separate semantics and allow external validation.
+		
+		The base syntax is minimal. Advanced semantics are added through:
+		
+		* `@stxt.schema` — formal and exhaustive validation.
+		* `@stxt.template` — simplified and prototype-oriented validation.
+		
+	Subheader: 2. Basic example: a book record
+	
+	Content >>
+		Let’s look at a simple example of an @STXT@ document that describes a book.
+		There is no validation yet: it is only @STXT@ language. Also, it has
+		no associated namespace.
+		
+	Code >>
+		Book:
+			Title: Modern software architecture
+			Authors:
+				Author: María Pérez
+				Author: Juan García
+			ISBN: 978-84-123456-7-8
+			Publisher: ACME Publishing
+			Published: 2025-10-01
+			Summary >>
+				This book offers a practical view of patterns and best practices
+				for designing distributed and scalable systems.
+			Chapter: Introduction to architecture
+				Content >>
+					In this chapter we present basic concepts:
+					monoliths, microservices, and design criteria.
+			Chapter: Communication between services
+				Content >>
+					Protocols, messaging, and integration patterns are described.
+	Content >>
+		Observations:
+		
+		* The hierarchy is defined **only by indentation**.
+		* `Summary >>` and `Content >>` are literal text blocks: their content is not interpreted as @STXT@.
+		* There is no implicit type: everything is text unless it is validated.
+		
+	Subheader: 3. Using namespaces
+	
+	Assert >>
+		Namespaces allow grouping nodes into categories. Also, if a namespace is defined
+		for a node, **child nodes inherit the parent’s namespace**, unless one of them
+		redefines it.
+		
+	Content >>
+		Example of a document with a namespace:
+		
+	Code >>
+		Book ***(com.acme.book)***:
+			Title: Modern software architecture
+			Authors:
+				Author: María Pérez
+				Author: Juan García
+			ISBN: 978-84-123456-7-8
+	
+	Content >>
+		In this example we see the `Book` node that belongs to the `com.acme.book` namespace.
+		In addition, we also see nodes `Title`, `Authors`, `Author`, and `ISBN`, which, being
+		descendants of `Book`, also inherit the `com.acme.book` namespace.
+		
+		Key rules:
+		
+		* The namespace is inherited by child nodes.
+		* A node can redefine its namespace if necessary.
+		* The @STXT@ language **does not validate** the namespace; it only defines the
+		  propagation rules.
+		
+	Subsubheader: 3.1 Special namespaces with `@`
+	Content >>
+		Namespaces may or may not start with `@`. This indicates that they are
+		**special or reserved namespaces**. For example, both templates
+		and schemas start with `@`.
+		
+		This is only a semantic indication, but the behavior is the same.
+	
+	Subsubheader: 3.2 Document validation
+	
+	Content >>
+		To be able to semantically validate a document, it must be associated with a **namespace**.
+		Once it has the namespace, a schema (`@stxt.schema`)
+		or template (`@stxt.template`) is used to validate it. Validations are extensions
+		to the base language, which parsers may or may not implement.
+		
+	Assert >>
+		To validate a document **it is necessary that it belongs to a namespace**.\\
+		On the other hand, a document with a namespace is not required to be validated.
+			
+	Subheader: 4. Validation with Templates
+	
+	Content >>
+		**Templates** allow defining structural and type rules
+		in a compact way. They are ideal for prototypes and living documentation.
+		
+		A template is an @STXT@ document whose namespace is `@stxt.template`.
+		
+	Subsubheader: 4.1 Template for books
+	
+	Code >>
+		Template (@stxt.template): com.acme.book
+			Description: Template for publishing book records
+			Structure >>
+				Book:
+					Title: (1)
+					Authors: (1)
+						Author: (+)
+					ISBN: (1)
+					Publisher: (?)
+					Published: (?) DATE
+					Summary: (?) TEXT
+					Chapter: (+)
+						Content: (?) TEXT
+							
+	Content >>
+		What this template defines:
+		
+		* `Book` is the expected root node.
+		* `Title`, `ISBN`, and `Authors` are required (`(1)`).
+		* `Author` can repeat and there must be at least one (`(+)`).
+		* `Published` must have `DATE` format.
+		* `Summary` and `Content` are text blocks (`TEXT`).
+		* There must be at least one `Chapter`.
+		
+	Subsubheader: 4.2 Applying the template
+	
+	Content >>
+		A validator that supports templates must:
+		
+		* Verify that the nodes exist.
+		* Check cardinalities.
+		* Validate basic types (number, date, boolean, text).
+		
+		The @STXT@ language **does not change**: the template is applied over the already-parsed tree.
+		Depending on the parser, it may validate at the same time it parses the content.
+		
+	Subheader: 5. Validation with Schemas
+	
+	Content >>
+		**Schemas** provide the same information as a template,
+		but in a more explicit and formal way.
+		
+		A schema:
+		
+		* Is an @STXT@ document with namespace `@stxt.schema`.
+		* Defines nodes, types, and cardinalities separately.
+		* Is the “canonical” representation of validation.
+		
+	Subsubheader: 5.1 Schema equivalent to the template
+	
+	Code >>
+		Schema (@stxt.schema): com.acme.book
+			Node: Book
+				Type: GROUP
+				Children:
+					Child: Title
+						Min: 1
+						Max: 1
+					Child: Authors
+						Min: 1
+						Max: 1
+					Child: ISBN
+						Min: 1
+						Max: 1
+					Child: Publisher
+						Max: 1
+					Child: Published
+						Max: 1
+					Child: Summary
+						Max: 1
+					Child: Chapters
+						Max: 1
+						
+			Node: Authors
+				Children:
+					Child: Author
+						Min: 1
+						
+			Node: Chapters
+				Children:
+					Child: Chapter
+						Min: 1
+						
+			Node: Chapter
+				Children:
+					Child: Content
+						Max: 1
+						
+			Node: Title
+			Node: Author
+			Node: ISBN
+			Node: Publisher
+			Node: Published
+				Type: DATE
+			Node: Summary
+				Type: TEXT
+			Node: Content
+				Type: TEXT
+				
+	Content confirms >>
+		* The schema is more verbose, but more explicit.
+		* A template can be automatically compiled into this form.
+		* A validator **SHOULD** prioritize schema over template if both exist.
+		
+	Subheader: 6. Final validatable document
+	
+	Content >>
+		Complete @STXT@ document that can be validated with the previous template or schema:
+		
+	Code >>
+		Book (@com.acme.book):
+			Title: Modern software architecture
+			Authors:
+				Author: María Pérez
+				Author: Juan García
+			ISBN: 978-84-123456-7-8
+			Published: 2025-10-01
+			Summary: A practical introduction to the architecture of modern systems.
+			Chapter: Introduction
+				Content >>
+					Basic concepts and objectives of the book.
+						
+	Content >>
+		This document:
+		
+		* Is valid @STXT@.
+		* Complies with the `com.acme.book` template.
+		* Complies with the `com.acme.book` schema.
+		
+	Subheader: 7. Best practices
+	
+	Content >>
+		* Use `>>` blocks for long or literal text.
+		* Keep indentation consistent (use spaces or tabs, but do not mix them).
+		* Use templates to iterate quickly or to have a view as close as possible to what the documents are like.
+		* Use schemas when a more formal description of the fields is needed

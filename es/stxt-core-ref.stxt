@@ -1,0 +1,767 @@
+Document: STXT (Semantic Text) — Documentos
+
+	Metadata:
+		Author: Joan Costa Mombiela
+		Last modif: 2026-01-03
+		
+	Header: @STXT@ Documentos
+	
+	Subheader: 1. Introducción
+	
+	Content >>
+		Este documento define la especificación del lenguaje **@STXT@ (Semantic Text)**.
+		
+		@STXT@ es un lenguaje **Human-First**, diseñado para que su forma natural sea legible, 
+		clara y cómoda para las personas, manteniendo al mismo tiempo una estructura precisa 
+		y fácilmente procesable por máquinas.
+		
+		@STXT@ es un formato textual jerárquico y semántico orientado a:
+		
+		* Representar documentos y datos de manera clara.
+		* Ser extremadamente sencillo de leer y escribir.
+		* Ser trivial de parsear en cualquier lenguaje.
+		* Permitir tanto contenido estructurado como texto libre.
+		* Extender su semántica mediante `@stxt.schema` o `@stxt.template`.
+		* Facilitar la creación de parsers intentando minimzar errores de seguridad
+		
+		Este documento describe la **sintaxis base** del lenguaje.
+
+	Subheader: 2. Terminología
+
+	Content >>
+		Las palabras clave **"DEBE"**, **"NO DEBE"**, **"DEBERÍA"**, **"NO DEBERÍA"**, y **"PUEDE"** deben interpretarse según **RFC 2119**.
+		
+	Subheader: 3. Codificación del Documento
+
+	Content >>
+		Un documento @STXT@ **DEBERÍA** codificarse en **UTF-8 sin BOM**.
+		
+		Un parser:
+		
+		* **DEBERÍA** aceptar documentos que comiencen con BOM.
+		* **PUEDE** emitir una advertencia en documentos que comiencen con BOM.
+		
+	Subheader: 4. Unidad Sintáctica: Nodo
+		
+	Content >>
+		Cada línea no vacía del documento que no sea comentario ni parte de un bloque `>>` define un **nodo**.
+		
+		Existen dos formas de nodo:
+		
+		1. **Nodo contenedor inline (nodo INLINE text)**: `Nombre nodo: Valor inline`
+		2. **Nodo bloque de texto (nodo BLOCK text)**: `Nombre nodo >>`
+		
+		El nombre del nodo **NO puede estar vacío**. Una línea con sólo `:` o `>>` no es válida. 
+		
+		**Ejemplo con nodos INLINE:**
+	
+	Code >>
+		***Nodo 1***: Valor inline
+			***Nodo 2 sin valor***:
+			***Nodo 3 con otro valor***: este es el otro valor
+		
+	Content >>	
+		**Ejemplo con nodo BLOCK:**
+	
+	Code >>
+		***Nodo block >>***
+			Este es el contenido
+			del bloque de texto:
+			
+			  - Se conservan espacios iniciales y saltos de línea
+			  - Se hace trim a la derecha
+			  - NO se hace trim a la izquierda
+		
+	Content>>
+		Un nodo puede incluir opcionalmente un namespace:
+		
+	Code>>
+		Nombre (namespace.normal):
+		Nombre (@namespace.especial):
+		
+	Subsubheader: 4.1 Normalización del nombre del nodo
+		
+	Content >>
+		El nombre del nodo se toma a partir del texto comprendido entre:
+		
+		- El primer carácter no perteneciente a la indentación, y
+		- El primer carácter que pertenezca a cualquiera de:
+		  - El inicio de un namespace `(`,
+		  - El carácter `:`,
+		  - El operador `>>`,
+		
+		Sobre ese fragmento se aplica:
+		
+		- Eliminación de espacios y tabuladores iniciales y finales (trim).
+		- Compactación de espacios en uno sólo
+		
+		El resultado de esta normalización es el **nombre del nodo**.
+		
+		Un nodo cuyo nombre lógico sea la cadena vacía (`""`) es inválido y **DEBE** provocar un error de parseo.
+		
+		Ejemplos equivalentes a nivel de `Nombre de nodo`:
+
+	Code>>
+		Nombe de nodo:
+		Nombre de nodo: valor
+		Nombre  de   nodo   : valor
+		Nombre  de nodo (@un.namespace.especial):
+		Nombre de nodo(un.namespace.normal):
+		Nombre  de nodo >>
+		Nombre de nodo>>
+		
+	Content>>
+		La definición de un nodo siempre debe incluir o bien `:` (nodo container INLINE) o bien `>>` (nodo texto BLOCK),
+		**siempre precedido de un nombre no vacío**.
+		
+	Subsubheader: 4.2 Restricciones del nombre del nodo
+		
+	Content >>
+		El nombre del nodo sólo permitirá carácteres alfanuméricos y los carácteres `-`, `_`, ` `.
+		Se permiten nombres con diacríticos, mayúsculas y minúsculas.		
+		
+	Subsubheader: 4.3 Nombre canónico del nodo
+		
+	Content >>
+		El nombre canónico se forma a partir del nombre del nodo mediante el siguiente proceso:
+		
+		* Descomposición Unicode (NFKD)
+		* Conviersión a minúsculas
+		* Eliminación diacríticos
+		* Compactación espacios (no necesario sobre nombre ya normalizado)
+		* Reemplazo de [^a-z0-9] por `-`. No se permiten 2 o más guiones seguidos, se deben compactar a uno sólo (`-`) 
+		* Eliminar guiones (`-`) al inicio y al final si existieran
+		
+		El nombre canónico será usado para saber si un nodo tiene el mismo nombre que otro.
+		También será usado internamente por todas las operaciones de búsqueda o comprobación,
+		para saber si se trata del mismo elemento.
+		
+		Ejemplos de transformación:
+		
+	Code >>
+		Un nombré con äcento: un-nombre-con-acento
+		UN NOMBRE con äcento: un-nombre-con-acento
+		TAMaÑo número 2__ y 3: tamano-numero-2-y-3
+
+	Subsubheader: 4.4 Normas de estilo
+	Content >>
+		La normas de estilo recomendables son las siguientes:
+		
+		* Separar el nombre de la definición de un namespace con un sólo espacio
+		* Separar `:` del valor con un sólo espacio
+		* `:` va inmediatamente después del nombre o del namespace si lo hubiera
+		* `>>` no tiene ningún carácter después
+		* Separar el nombre del nodo o el namespace con un espacio antes de `>>`
+		* No se usa más de un espacio en los nombres
+		* Namespace sin espacios en la definición `(namespace.def)`
+		
+		Ejemplos de estilo correcto:
+		
+	Code>>
+		Nombre con valor: El valor
+		Nombre sin valor:
+		Nombre con namespace (el.namespace):
+		Nodo de texto >>
+		
+	Subheader: 5. Nodos contenedor, tipo INLINE
+		
+	Content >>
+		La forma con `:` define un nodo contenedor INLINE con las siguientes caracteríticas:
+		
+		* Puede tener valor (opcional).
+		* Puede no tener valor (nodo vacío).
+		* Puede tener hijos (nodos anidados).
+		* Su contenido estructurado incluye:
+		  * La propia línea del nodo.
+		  * Sus descendientes con mayor indentación
+		
+		Ejemplos:
+		
+	Code >>
+		Titulo: Informe
+		Autor: Joan
+		Nodo:
+		Nodo: Valor
+		Nodo:
+		    SubNodo 1: 123
+		    Otro subnodo: 456
+
+	SubSubheader: 5.1 Normalización del valor
+	
+	Content>>
+		El valor (INLINE) de un nodo debe normalizarse con un trim (derecha e izquierda).
+		
+		Ejemplo:
+	Code>>
+		Nombre: valor 1
+		Nombre:    valor 1    
+		# en los dos casos, el valor inline de Nombre es "valor 1", aunque en el 
+		# segundo haya espacios antes y después.		
+	
+	Content>>	
+		La normalización fuerte se aplica sólo a identificadores estructurales.
+		Los valores son literales, aunque se aplica una **normalización sencilla: trim derecha e izquierda**.
+
+	Subheader: 6. Nodos bloque texto, tipo BLOCK
+		
+	Content >>
+		La forma con `>>` define un bloque de **texto literal**.
+		
+		Ejemplos válidos:
+
+	Code >>		
+		Descripcion >>
+		    Línea 1
+		    Línea 2
+
+	Code >>	
+		Seccion>>
+		    Acepta el operador sin espacio
+		
+	Subsubheader: 6.1 Reglas formales
+		
+	Content >>
+		* La línea del nodo `>>` **NO DEBE** contener contenido significativo tras `>>`, excepto espacios opcionales.
+		* Todas las líneas con indentación **estrictamente mayor** que la del nodo `>>` pertenecen al **contenido textual del bloque**.
+		* Dentro del bloque:
+		  * El parser **NO DEBE** interpretar ninguna línea como nodo estructurado, aunque contenga `:` u otra sintaxis de STXT.
+		  * El parser **NO DEBE** interpretar líneas que comienzan por `#` como comentarios; todas las líneas son texto literal.
+		* El bloque termina cuando aparece una **línea no vacía que no sea comentario** cuya indentación es **menor o igual** que la indentación del nodo `>>`.
+		* Las líneas vacías **dentro del bloque** se conservan y **NO DEBEN** cerrar el bloque, independientemente de su indentación.
+		
+	Subsubheader: 6.2 Ejemplo
+		
+	Code >>
+		Bloque >>
+		    Texto
+		        Hijo: valor SI permitido, es texto, no se parsea
+		        Otro hijo: SI permitido
+		    # Esto también es texto
+		Siguiente Nodo: valor
+
+	Content >>		
+		En este ejemplo:
+		
+		* Todo lo indentado por debajo de `Bloque >>` es texto literal.
+		* `Hijo: valor` y `Otro hijo: SI permitido` **no** son nodos, sino texto.
+		* `Siguiente Nodo: valor` está fuera del bloque `>>`.
+		
+	Subheader: 7. Namespaces
+		
+	Content >>
+		Un namespace es opcional y se especifica así:
+
+	Code >>		
+		Nodo ***(com.example.docs)***:
+		Otro nodo ***(otro.namespace)***:
+		Más nodos ***(@un.nombre.especial)***:
+		
+	Content >>
+		Reglas:
+		
+		* Un namespace **PUEDE** empezar por `@`.
+		* **DEBE** usar formato jerárquico (`a.b.c`), con al menos 2 elementos (`a.b`).
+		* Se hereda por los nodos hijos.
+		* Si no se especifica namespace, por defecto es el namespace vacío `""`.
+		* El namespace vacío NO puede especificarse como `Nombre nodo ()`. 
+		* El namespace vacío de un nodo siempre se sobreescribe con el namespace del padre
+		* Un nodo hijo puede redefinir su namespace indicando `(otro.namespace)`, en cuyo caso usa ese namespace en lugar del heredado.
+		* Sólo se permiten caracteres dentro del rango [a-z0-9], precedido por `@` de forma opcional, para indicar que es un namespace especial.
+		* Un parser **DEBE** pasar a minúsculas un namespace. Así debe convertir de `Nombre (COM.DEMO.DOCS)` a `Nombre (com.demo.docs)` internamente
+		* Por reglas de estilo un namespace debería escribirse en minúsculas 
+		
+	Subheader: 8. Indentación y Jerarquía
+		
+	Content >>
+		La indentación define la jerarquía estructurada del documento.
+		
+	Subsubheader: 8.1 Indentación Permitida
+		
+	Content >>
+		Un documento STXT:
+		
+		* **PUEDE** usar espacios o tabuladores para identación.
+		* **No se recomienda** mezclar espacios o tabuladores en una misma línea. Un parser **PUEDE** dar un aviso en ese caso. 
+		  En caso de mezclarlos, los espacios que no lleguen a 4 se descartan si aparece un tabulador. Sigiendo el principio
+		  ** Human First**, esta regla es para asegurar que un documento que *parece* correcto lo sea realmente. Es decir, que no sea
+		  necesario ir revisando líneas carácter a carácter para saber si algo es correcto o no, debe verse a simple vista. 
+		* Si usa espacios:
+		  * **DEBE** usar múltiples de **4 espacios** para subir de nivel.
+		* Si usa tabs:
+		  * Cada tab representa exactamente 1 nivel.
+		* Se muestran todos los casos posibles de subida de nivel:
+		  * 0 Espacios + 1 TAB
+		  * 1 Espacios + 1 TAB
+		  * 2 Espacios + 1 TAB
+		  * 3 Espacios + 1 TAB
+		  * 4 Espacios + 0 TAB
+		* Una vez se ha subido de nivel se vuelven a aplicar las reglas anteriores. Es decir, se resetea el conteo en cada subida
+		  de nivel. 
+		  
+	Subsubheader: 8.2 Ejemplos de identación especiales
+	
+	Content >>
+		En los siguientes ejemplos se muestra `.` para identificar un espacio, y `|-->` para identificar un Tabulador.
+		El tabulador se mostrará con los carácteres que falten hasta llegar a la siguiente columna, como un editor de texto.
+
+	Content >>
+		Ejemplo con tabuladores:
+		
+	Code >>
+		Nodo nivel 0: Valor nivel 0
+		|-->Nodo nivel 1:
+		|-->Otro nodo nivel 1:
+		|-->|-->Nivel 2:
+		|-->|-->Nivel 2:
+		|-->Nivel 1:
+		|-->Nivel 1:
+	
+	Content >>		
+		Ejemplo con espacios:
+		
+	Code >>
+		Nodo nivel 0: Valor nivel 0
+		....Nodo nivel 1:
+		....Otro nodo nivel 1:
+		........Nivel 2:
+		........Nivel 2:
+		....Nivel 1:
+		....Nivel 1:
+	
+	Content >>
+		Ejemplo con mezcla de espacios y tabuladores. 
+		
+		Permitido, aunque no recomendable por estilo.
+		Un parser **PUEDE** dar un aviso de mezcla en la misma línea.
+		Este ejemplo tiene la misma identación que los dos anteriores.
+		
+	Code >>
+		Nodo nivel 0: Valor nivel 0
+		.|->Nodo nivel 1: ***Espacio + 1 TAB: nivel 1***
+		..|>Otro nodo nivel 1: ***2 Espacios + 1 TAB: nivel 1***
+		...>..|>Nivel 2: ***3 Espacios + 1 TAB, 2 Espacios + 1 TAB: nivel 2***
+		|-->....Nivel 2: ***1 TAB, 4 Espacios: nivel 2***
+		..|>Nivel 1: ***2 Espacios + 1 TAB: nivel 1***
+		.|->Nivel 1: ***1 Espacio + 1 TAB: nivel 1***
+		
+		
+	Subsubheader: 8.3 Errores de nivel
+	
+	Content >>
+		Un parser **DEBE** dar error de parseo en los siguientes casos:
+		
+		* Niveles no consecutivos:
+		
+	Code>>
+		Nivel 0:
+		....Nivel 1:
+		............Nivel3: ***ERROR, no se puede pasar de nivel 1 a nivel 3***
+		
+	Content >>
+		* No llegar a múltiplo de 4 al usar espacios o mezcla
+		
+	Code >>
+		Nivel 0:
+		....Nivel 1
+		...Nivel casi 1: ***ERROR: 3 espacios (no se llega a 4)***
+		
+		Nivel 0:
+		....Nivel 1:
+		.|->..Nivel casi 2: ***ERROR: 1 espacios + 1TAB, 2 espacios***
+		
+		Nivel 0:
+		....Nivel 1:
+		..........Nivel mas que 2: ***ERROR: 4 espacios, 4 espacios, 2 espacios*** 
+		
+	Subsubheader: 8.4 Jerarquía
+		
+	Content >>
+		* La indentación **DEBE** aumentar de forma consecutiva (no se permiten saltos).
+		* Los nodos hijos **DEBEN** tener mayor indentación que su padre.
+		* La indentación dentro de un bloque `>>` **no afecta a la jerarquía estructural**: es simplemente texto.
+		
+	Subheader: 9. Comentarios
+		
+	Content >>
+		Fuera de bloques `>>`, una línea es un comentario si, tras su indentación, el primer carácter es `#`.
+		
+		Ejemplo:
+	Code >>		
+		# Comentario raíz
+		Nodo:
+		    # Comentario interior
+		
+	Subsubheader: 9.1 Comentarios dentro de bloques `>>`
+		
+	Content >>
+		Dentro de un bloque `>>`:
+		
+		* Toda línea con indentación igual o superior a la indentación mínima del contenido del 
+		  bloque **DEBE** tratarse como texto literal, incluso si empieza por `#`.
+		* Una línea menos indentada que el bloque que no sea comentario termina el bloque
+		
+		Ejemplo:
+	Code >>
+		***# Un comentario normal (nivel 0)***
+		Documento:
+			***# Otro comentario normal***
+					***# ¡Esto también es un comentario! Fuera de bloque >>***
+		    Texto >>
+		        # Esto es texto
+		        Línea normal
+		            # También es texto normal
+		    ***# Esto sí es comentario***
+		***# Esto también es un comentario***
+		    	Aquí continúa el texto del nodo
+
+	Subsubheader: 9.2 Estilo para comentarios
+	Content >>
+		* Se recomienda que el comentario esté en el mismo nivel que el siguiente nodo.
+		  Es decir, comentarios para el siguiente nodo.
+		* No se recomiendan comentarios dentro de un bloque de texto, ya que visualmente
+		  son extraños. 
+
+	Subheader: 10. Normalización de espacios en blanco
+		
+	Content >>
+		Esta sección define cómo deben normalizarse los espacios en blanco para 
+		garantizar que distintas implementaciones produzcan la misma representación 
+		lógica a partir del mismo texto STXT.
+		
+	Subsubheader: 10.1 Valores inline (`:`)
+		
+	Content >>
+		Al parsear un nodo con `:`:
+		
+		1. El parser toma todos los caracteres desde inmediatamente después de `:` hasta el fin de línea.
+		2. El valor inline **DEBE** normalizarse aplicando:
+		
+		   * Eliminación de espacios y tabuladores iniciales (trim a la izquierda).
+		   * Eliminación de espacios y tabuladores finales (trim a la derecha).
+		
+		Esto implica que las siguientes líneas son equivalentes a nivel de parseo:
+		
+	Code >>
+		Nombre: Joan
+		Nombre:     Joan
+		Nombre: Joan    
+		Nombre:     Joan    
+
+	Content >>		
+		En todos los casos, el valor lógico del nodo `Nombre` es `"Joan"`.
+		
+		Si tras el `trim` el valor queda vacío, el valor inline se considera la cadena vacía (`""`).
+		
+	Subsubheader: 10.2 Líneas dentro de bloques `>>`
+		
+	Content >>
+		Para cada línea que pertenece a un bloque `>>`:
+		
+		1. El parser determina el contenido de la línea a partir del texto que sigue a la indentación mínima del bloque 
+		   (es decir, elimina solo la indentación de bloque, pero conserva cualquier indentación adicional como parte del texto).
+		2. Sobre ese contenido, el parser **DEBE** eliminar todos los espacios y tabuladores finales (trim a la derecha).
+		3. Las líneas vacías se conservan en todos los casos, exceptio líneas que son comentarios reales, con identación inferior al bloque.
+		
+		Ejemplo de canonicalización de líneas:
+		
+	Code >>
+		Bloque >>
+		    Hola    
+		        Mundo        
+
+	Content >>		
+		Representación lógica del contenido del bloque:
+		
+		* Línea 1: `"Hola"`
+		* Línea 2: `"    Mundo"`  (las 4 espacios adicionales tras la indentación mínima se conservan, los espacios del final se eliminan)
+		
+	Subsubheader: 10.3 Líneas vacías en bloques `>>`
+		
+	Content >>
+		* Las líneas vacías **intermedias** dentro del bloque (intermedias o finales) **DEBEN** preservarse como líneas vacías (`""`) en la representación lógica del texto.
+		* Solo se aplica trim a la derecha en cada línea individual (eliminar espacios/tab al final de línea, como ya se hace).
+		* No se elimina ninguna línea vacía, ni intermedia ni final.
+		
+		Ejemplo:
+		
+	Code >>
+		Texto >>
+		    Línea 1
+		    
+		    Línea 2
+		    
+	Content >>		
+		Contenido lógico del bloque:
+		
+		* Línea 1: `"Línea 1"`
+		* Línea 2: `""`
+		* Línea 3: `"Línea 2"`
+		* Línea 4: `""`
+		
+	Subheader: 11. Reglas de Error
+		
+	Content >>
+		Un documento es inválido si ocurre alguna de estas condiciones:
+		
+		1. Espacios que no sean múltiplos de 4 (cuando se usan espacios para indentación).
+		2. Saltos en los niveles de indentación.
+		3. Un nodo `>>` contiene contenido significativo inline en la misma línea que `>>`.
+		4. Un nodo no contiene ni `:` ni `>>`.
+		
+		Un parser conforme **DEBE** rechazar el documento.
+		
+	Subheader: 12. Conformidad
+		
+	Content >>
+		Una implementación STXT es conforme si:
+		
+		* Implementa la sintaxis descrita en este documento.
+		* Aplica las reglas estrictas de indentación y jerarquía.
+		* Interpreta correctamente nodos con `:` y bloques `>>`.
+		* Interpreta comentarios fuera de bloques `>>`.
+		* Trata **todo** lo dentro de bloques `>>` como texto literal.
+		* Aplica las reglas de normalización de espacios en blanco de la sección 10.
+		* Rechaza documentos inválidos según la sección 11.
+		
+	Subheader: 13. Extensión de Archivo y Media Type
+		
+	Subsubheader: 13.1 Extensión de Archivo
+		
+	Content >>
+		Los documentos STXT **DEBERÍAN** usar la extensión: `.stxt`
+		
+	Subsubheader: 13.2 Media Type (MIME)
+		
+	Content >>
+		* Media type oficial: `text/stxt`
+		* Alternativa compatible: `text/plain`
+
+	Subheader: 14. Ejemplos Normativos
+		
+	Subsubheader: 14.1 Documento válido
+		
+	Code >>
+		Documento (com.example.docs):
+		    Autor: Joan
+		    Fecha: 2025/12/03
+		    Resumen >>
+		        Este es un bloque de texto.
+		        Con varias líneas.
+		    Config:
+		        Modo: Activo
+		
+	Subsubheader: 14.2 Bloque con líneas vacías
+		
+	Code >>
+		Texto>>
+		    
+		    Línea 2
+	Content >>		
+		Contenido lógico del bloque:
+		
+		1. `""`
+		2. `"Línea 2"`
+
+	
+	Subsubheader: 14.3 Comentarios dentro y fuera de bloques
+		
+	Code >>
+		Documento:
+		    Cuerpo >>
+		        # Esto es texto
+		        Más texto
+		    # Esto sí es comentario
+		
+	Subheader: 15. Consideraciones de Seguridad
+	
+	Content >>
+		@STXT@ ha sido diseñado con la seguridad del parseo como prioridad fundamental, 
+		minimizando la superficie de ataque en comparación con otros formatos textuales estructurados.
+		
+		Un parser conforme de @STXT@ es inherentemente resistente a clases comunes de vulnerabilidades:
+		
+		* **Inmune a ataques de expansión de entidades** (como "billion laughs" o XXE): 
+		  el formato no define entidades, referencias externas ni inclusión de recursos remotos.
+		* **Inmune a ejecución de código arbitrario**: no existen características dinámicas, tags personalizados, 
+		  loaders ni deserialización de objetos. La única estructura resultante es un árbol simple de nodos y valores textuales.
+		* **Inmune a inyección dentro de bloques literales**: todo contenido dentro de un nodo `>>` se trata 
+		  como texto literal sin interpretación alguna, incluso si contiene `:`, `>>`, `#` u otra sintaxis STXT.
+		* **Bajo riesgo de denegación de servicio**: las reglas estrictas de indentación consecutiva 
+		  y la ausencia de referencias circulares o anchors limitan la complejidad estructural. 
+		  Las implementaciones **DEBERÍAN** imponer un límite razonable de profundidad de anidamiento (recomendado: ≤ 100 niveles) 
+		  y tamaño total del documento.
+		* **Schemas externos opcionales**: la validación semántica es una capa separada. 
+		  Un parser básico **PUEDE** operar sin cargar schemas externos, eliminando riesgos asociados a su resolución.
+		
+		En consecuencia, STXT es especialmente adecuado para procesar documentos de fuentes no confiables 
+		(configuraciones remotas, entradas de usuario, intercambio de datos) donde la seguridad del parser es crítica.
+		
+		Las implementaciones **DEBEN** rechazar documentos inválidos según la sección 11 
+		y **NO DEBEN** introducir extensiones que permitan carga externa 
+		o evaluación dinámica sin medidas de seguridad explícitas.
+		
+	Subheader: 16. Apéndice A — Gramática (Informal)
+		
+	Code >>
+		Documento       = { Línea }
+		
+		Línea           = [Indentación] ( Comentario | Nodo | BloqueContinuación | LíneaVacía )
+		
+		Nodo            = Indentación Nombre [Namespace] ( Inline | BlockStart )
+		Inline          = ":" [Espacio] [TextoInline]
+		BlockStart      = [Espacio] ">>" [EspaciosFinales]
+		
+		Namespace       = "(" ["@"] Ident { "." Ident } ")"
+		Ident           = [a-z0-9]+   ; solo minúsculas y números según reglas de estilo y normalización
+		
+		Comentario      = "#" { cualquier carácter hasta fin de línea }
+		
+		BloqueContinuación = IndentaciónMayorQueBloqueAnterior { cualquier texto }   ; texto literal
+		
+		Indentación     = Mezcla permitida de espacios y tabuladores según sección 8
+		                  - Puros espacios: múltiplos exactos de 4 por nivel
+		                  - Puros tabs: 1 tab = 1 nivel
+		                  - Mixtos en línea: tab gana, espacios <4 se ignoran
+		
+		Nombre          = Texto normalizado (trim + compactación espacios) según sección 4.1
+		
+	Content >>	
+		**Notas clave para implementadores:**
+		
+		* El parser debe procesar el documento línea por línea, manteniendo estado de:
+		  - Nivel de indentación actual del nodo padre.
+		  - Indentación base y estado de bloque `>>` activo (si lo hay).
+		  - Namespace heredado actual.
+		
+		* **Flujo básico de parseo:**
+		  1. Leer línea y calcular su indentación efectiva (según reglas de sección 8).
+		  2. Si hay bloque `>>` activo:
+		     - Si indentación ≥ indentación mínima del bloque → añadir línea como texto literal (trim derecha).
+		     - Si indentación ≤ indentación del nodo `>>` y línea no vacía y línea no comentario → cerrar bloque y procesar como nuevo nodo.
+		  3. Si no hay bloque activo:
+		     - Línea vacía → ignorar (no afecta jerarquía).
+		     - Empieza por `#` → comentario.
+		     - En caso contrario → nuevo nodo (normalizar nombre, detectar namespace, tipo : o >>).
+		
+		* **Herencia de namespace:**
+		  - El namespace del nodo raíz es vacío por defecto.
+		  - Cada nodo hereda el namespace de su padre.
+		  - Si un nodo define su propio namespace entre `()`, este reemplaza al heredado para él y todos sus descendientes.
+		
+		* **Normalización adicional:**
+		  - Nombres de nodo: según sección 4.1–4.3.
+		  - Namespaces: convertidos internamente a minúsculas (sección 7).
+		  - Valores inline: trim izquierdo y derecho (sección 10.1).
+		  - Líneas de bloque: conservar indentación relativa + trim derecha + preservar todas las líneas vacías (sección 10.2–10.3).
+				Comentario       = Indent "#" Texto       ; Solo fuera de bloques '>>'
+
+	Subheader: 17. Apéndice B — Interacción con `@stxt.schema`
+		
+	Content >>
+		El sistema de schemas permite añadir validación semántica a documentos STXT **sin modificar la sintaxis base** del lenguaje.
+		
+		El núcleo STXT no define cómo debe reaccionar una implementación: el comportamiento pertenece exclusivamente al sistema de schemas (*STXT-SCHEMA-SPEC*).
+		
+		Un schema es un documento STXT cuyo namespace es: `@stxt.schema`
+		
+		y cuyo objetivo es definir las reglas estructurales, tipos de valor y cardinalidades de los nodos pertenecientes a un namespace concreto.
+		
+		El núcleo STXT **no interpreta** estas reglas; únicamente define cómo se expresan y cómo se combinan mediante namespaces.
+		
+	Subsubheader: 17.1. Asociación de un schema a un namespace
+		
+	Content >>
+		Para asociar un schema al namespace `com.example.docs`, se escribe un documento:
+		
+	Code>>
+		Schema (@stxt.schema): com.example.docs
+			Node: Email
+				Children:
+					Child: From
+					Child: To
+					Child: Cc
+					Child: Bcc
+					Child: Title
+						Max: 1
+					Child: Body Content
+						Min: 1
+						Max: 1
+					Child: Metadata (com.google)
+						Max: 1
+			Node: From
+			Node: To
+			Node: Cc
+			Node: Bcc
+			Node: Title
+			Node: Body Content
+				Type: TEXT
+		
+	Subsubheader: 17.2. Aplicación a documentos STXT
+		
+	Content >>
+		Un documento que declare el mismo namespace:
+		
+	Code >>
+		Documento (com.example.docs):
+		    Campo1: valor
+		    Texto: uno
+		    Texto: dos
+	
+	Content >>
+		
+		puede ser validado por una implementación que soporte schemas STXT:
+		
+		* Validando la presencia de nodos según `Node` del schema.
+		* Validando tipos de valor (`TEXT`, `DATE`, `NUMBER`, etc.).
+		* Validando cardinalidades definidas en `Child`.
+		
+	Subsubheader: 17.3. Independencia del núcleo
+		
+	Content >>
+		STXT **NO DEBE** imponer reglas semánticas provenientes de schemas.
+		El sistema de schemas es un componente separado y opcional que opera **sobre** el STXT ya parseado.
+		
+		También **PUEDE** actuar como parte del proceso de parseo. En ese caso **DEBERÍA** estar débilmente acoplado con él. 
+		Esto permitiría detectar errores sin tener que esperar al final del parseo de parseo.
+		
+	Subheader: 18. Apéndice B — Interacción con `@stxt.template`
+
+	Content>>	
+		El sistema de templates permite añadir validación semántica a documentos STXT **sin modificar la sintaxis base** del lenguaje.
+		
+		El núcleo STXT no define cómo debe reaccionar una implementación: el comportamiento pertenece exclusivamente al sistema de templates (*STXT-TEMPLATE-SPEC*).
+		
+		Un template es un documento STXT cuyo namespace es: `@stxt.template`
+		
+		y cuyo objetivo es definir las reglas estructurales, tipos de valor y cardinalidades de los nodos pertenecientes a un namespace concreto.
+		
+		El sistema de Templates es análogo a los schemas, pero con una syntaxis simplificada, orientada a prototipos rápidos. 
+		Aún así, es un sistema perfectamente válido para todo tipo de documentos. Podría considerarse *azúcar sintáctico*, ya que internamente puede usar 
+		la misma representación que un esquema.
+		
+		El sistema de templates **PUEDE** convivir junto a un sistema con esquemas, ya que al final un Template define la misma información que un schema.
+	
+	Subsubheader: 18.1. Asociación de un schema a un template
+		
+	Content >>
+		Para asociar un schema al namespace `com.example.docs` con templates, se escribe un documento:
+		
+	Code>>
+		Template (@stxt.template): com.example.docs
+			Structure >>
+				Email:
+					From:
+					To:
+					Cc:
+					Bcc:
+					Title: (?)
+					Body    Content: (1) TEXT
+					Metadata (com.google): (?)
+					
+	Content>>
+		Una vez declarado, los templates cumplen la misma función que los schemas.
+		Un validador estándar **DEBERÍA** priorizar un schema por encima de un template.  
+	
+	Subheader: 19. Fin del Documento
+			
+				

@@ -1,0 +1,262 @@
+Document: Documentos corporativos
+
+	Metadata:
+		Author: ChatGPT 5.2
+		Revision: Joan Costa Mombiela
+		Last modif: 2026-01-11
+		
+	Header: Documentos corporativos
+	
+	Content >>
+		Los documentos corporativos suelen vivir en un punto intermedio incómodo:
+		necesitan ser **legibles y editables por personas**, pero también deben ser
+		**consistentes**, **revisables** y **procesables** para automatización.
+		
+		@STXT@ encaja especialmente bien cuando un “documento” es a la vez:
+		
+		* contenido humano (texto),
+		* estructura (secciones, metadatos),
+		* y datos (campos, listas, estados).
+		
+	Subheader: Qué tipo de documentos
+	
+	Content >>
+		Ejemplos habituales:
+		
+		* Actas de reunión
+		* Informes de estado (semanales/mensuales)
+		* Propuestas / RFC internos
+		* Políticas y procedimientos
+		* Postmortems (incidentes)
+		* Requisitos y decisiones (ADR: Architecture Decision Record, registro de decisiones de arquitectura)
+		
+	Subheader: Por qué @STXT@ aquí
+	
+	Content >>
+		En entorno corporativo suelen aparecer estos problemas:
+		
+		* **Múltiples autores**: gente no técnica y técnica editando el mismo documento.
+		* **Plantillas**: todos quieren el mismo formato, pero nadie quiere pelearse con un editor pesado.
+		* **Revisión**: comparaciones (diff) claras en Git.
+		* **Automatización**: extraer campos (estado, responsables, fechas, acciones) sin romper el texto.
+		* **Evolución**: el formato del documento cambia con el tiempo.
+		
+		@STXT@ aporta:
+		
+		* Estructura explícita por indentación, fácil de escribir.
+		* Texto libre en bloques `>>` sin “escapes” ni sintaxis extra.
+		* Validación opcional con `@stxt.template` o `@stxt.schema`.
+		* Namespaces para separar semántica por tipo de documento (`com.acme.minutes`, `com.acme.report`, etc.).
+		
+	Subheader: Ejemplo 1 — Acta de reunión
+	
+	Content >>
+		Documento realista: mezcla metadatos, agenda, decisiones y acciones.
+		El texto libre vive en bloques, y lo procesable queda como nodos.
+		
+	Code >>
+		Minutes (@com.acme.corp.minutes):
+			Title: Weekly sync — Platform
+			Date: 2026-01-09
+			Time: 10:00
+			Duration minutes: 45
+			Meeting id: PLAT-2026-01-09
+			Location: Google Meet
+			Confidential: false
+			
+			Attendees:
+				Attendee: Joan Costa
+				Attendee: Mery Adams
+				Attendee: Keyla Brown
+			
+			Agenda:
+				Item:
+					Title: Estado del roadmap Q1
+				Item:
+					Title: Incidencias y riesgos
+				Item:
+					Title: Decisiones pendientes
+			
+			Notes >>
+				Resumen ejecutivo:
+				- Roadmap en verde, pero falta cerrar capacidad del equipo.
+				- Riesgo principal: dependencia de proveedor externo en el módulo X.
+				
+				Observaciones:
+				- Se acuerda mover el despliegue del viernes al lunes.
+				- Se revisará el coste de la opción B.
+			
+			Decisions:
+				Decision:
+					Id: DEC-0142
+					Title: Mover ventana de despliegue a lunes
+					Status: Approved
+					Owner: Platform Team
+					Rationale >>
+						Reducimos riesgo operativo y facilitamos soporte el lunes.
+						
+				Decision:
+					Id: DEC-0143
+					Title: Congelar cambios no críticos en módulo X
+					Status: Proposed
+					Owner: Reliability
+					Rationale >>
+						Dependencia externa con variabilidad alta en tiempos de respuesta.
+			
+			Action Items:
+				Action:
+					Id: ACT-0991
+					Title: Preparar propuesta de capacidad (Q1)
+					Owner: Mery Adams
+					Due: 2026-01-16
+					Status: Open
+				Action:
+					Id: ACT-0992
+					Title: Estimar coste opción B
+					Owner: Joan Costa
+					Due: 2026-01-14
+					Status: In Progress
+	
+	Subheader: Qué se automatiza con este documento
+	
+	Content >>
+		Con el árbol STXT puedes:
+		
+		* Listar acciones abiertas y fechas de vencimiento.
+		* Generar un resumen para correo o chat.
+		* Calcular métricas: acciones por equipo, tiempos, porcentaje “done”.
+		* Exportar a otros formatos (por ejemplo, JSON para un dashboard).
+		
+		Al mismo tiempo:
+		
+		* `Notes >>` y `Rationale >>` mantienen texto humano sin restricciones artificiales.
+		
+	Subheader: Ejemplo 2 — Informe de estado
+	
+	Content >>
+		Un informe de estado es ideal para:
+		
+		* “Estado” como dato validable.
+		* “Detalle” como texto libre.
+		* Riesgos y bloqueos como listas procesables.
+		
+	Code >>
+		Status Report (@com.acme.corp.status):
+			Period:
+				From: 2026-01-05
+				To: 2026-01-09
+			
+			Project: STXT Web
+			Owner: Platform Docs
+			Status: Green
+			
+			Summary >>
+				Avance sostenido en la documentación base y consolidación de ejemplos.
+				Queda trabajo en herramientas (CLI y editor online) y casos de uso.
+			
+			Progress:
+				Item:
+					Title: Página de introducción
+					Done: true
+				Item:
+					Title: Tutorial actualizado
+					Done: true
+				Item:
+					Title: Especificaciones (core/schema/template)
+					Done: In Progress
+			
+			Risks:
+				Risk:
+					Id: RSK-020
+					Level: Medium
+					Title: Falta de ejemplos de migración
+					Mitigation >>
+						Crear ejemplos de XML/YAML y explicar equivalencias.
+			
+			Next:
+				Item: Cerrar páginas de casos de uso
+				Item: Publicar primera versión del parser Java
+				Item: Preparar repositorio de ejemplos
+	
+	Subheader: Validación con @stxt.template
+	
+	Content >>
+		Para evitar documentos “a medias”, un template puede asegurar estructura mínima
+		(sin volverse demasiado verboso).
+		
+	Code >>
+		Template (@stxt.template): com.acme.corp.minutes
+			Description: Plantilla de actas corporativas
+			Structure >>
+				Minutes:
+					Title: (1)
+					Date: (1) DATE
+					Time: (?) TIME
+					Duration minutes: (?) NATURAL
+					Meeting id: (?) 
+					Location: (?)
+					Confidential: (?) BOOLEAN
+					
+					Attendees: (?)
+						Attendee: (+)
+					
+					Agenda: (?)
+						Item: (*)
+							Title: (1)
+					
+					Notes: (?) TEXT
+					
+					Decisions: (?)
+						Decision: (*)
+							Id: (1)
+							Title: (1)
+							Status: (1) ENUM [Proposed, Approved, Rejected]
+							Owner: (?)
+							Rationale: (?) TEXT
+					
+					Action Items: (?)
+						Action: (*)
+							Id: (1)
+							Title: (1)
+							Owner: (?)
+							Due: (?) DATE
+							Status: (1) ENUM [Open, In Progress, Done, Blocked]
+	
+	Content >>
+		Este template:
+		
+		* Garantiza campos mínimos (por ejemplo `Title`, `Date`).
+		* Controla estados con `ENUM`.
+		* Permite texto libre donde toca (`TEXT`).
+		* Mantiene el documento agradable de editar (no obliga a “Node:” como en schema).
+		
+	Subheader: Validación con @stxt.schema
+	
+	Content >>
+		Si necesitas contratos estrictos, el schema es la forma más explícita.
+		Es útil cuando:
+		
+		* Hay múltiples productores/consumidores del documento.
+		* Se quiere interoperabilidad fuerte entre equipos o sistemas.
+		* Hay “compliance” (auditorías, controles, archivado).
+		
+		Nota: el schema equivalente es más largo; normalmente se genera a partir del template.
+		
+	Subheader: Ventajas prácticas en empresa
+	
+	Content >>
+		* **Diffs claros en Git**: los cambios suelen afectar líneas concretas, no blobs.
+		* **Menos fricción**: se edita con cualquier editor de texto.
+		* **Estandarización**: template como contrato ligero para “todos escribimos igual”.
+		* **Automatización gradual**: puedes empezar sin validación, y añadirla después sin cambiar la sintaxis.
+		* **Integración**: un parser produce un árbol; de ahí puedes exportar a JSON/XML/YAML o alimentar herramientas internas.
+		
+	Subheader: Recomendaciones de estilo
+	
+	Content >>
+		* Usa nombres de nodos estables (“Action Items”, “Decision”, “Status”…).
+		* Reserva `>>` para texto largo, contexto o argumentación.
+		* Mantén cardinalidades pequeñas y explícitas en templates para evitar ambigüedad.
+		* Si necesitas estados, usa `ENUM` con valores acotados.
+		* Si el documento va a vivir en Git, evita re-formateos automáticos (cambios masivos de espacios) para mantener diffs útiles.
+			
