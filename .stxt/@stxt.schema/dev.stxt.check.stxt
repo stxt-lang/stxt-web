@@ -1,0 +1,36 @@
+Schema (@stxt.schema): dev.stxt.check
+	Node: Type List
+		Children:
+			Child: text
+				Min: 1
+			Child: natural
+				Min: 1
+			Child: integer
+				Min: 1
+			Child: number
+				Min: 1
+			Child: hexadecimal
+				Min: 1
+			Child: Base64
+				Min: 1
+			Child: Boolean
+				Min: 1
+			Child: Url
+				Min: 1
+	Node: text
+		Type: TEXT 
+	Node: natural 
+		Type: NATURAL
+	Node: integer 
+		Type: INTEGER
+	Node: number 
+		Type: NUMBER
+	Node: hexadecimal 
+		Type: HEXADECIMAL
+	Node: Base64 
+		Type: BASE64
+	Node: Boolean 
+		Type: BOOLEAN
+	Node: Url 
+		Type: URL
+	
