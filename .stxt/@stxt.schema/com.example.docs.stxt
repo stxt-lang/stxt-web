@@ -2,6 +2,8 @@ Schema (@stxt.schema): com.example.docs
 	Node: Email
 		Children:
 			Child: From
+				Min: 1
+				Max: 1
 			Child: To
 			Child: Cc
 			Child: Bcc
