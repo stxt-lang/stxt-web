@@ -8,19 +8,22 @@ Document: STXT Plantillas (@stxt.template)
 	Subheader: 1. Introducción
 	
 	Content >>
-		Este documento define la especificación del lenguaje **STXT Template**, un mecanismo para describir reglas semánticas (estructura, tipos y cardinalidades) aplicables a documentos STXT.
+		Este documento define la especificación del lenguaje **STXT Template**, un mecanismo para describir reglas semánticas 
+		(estructura, tipos y cardinalidades) aplicables a documentos STXT.
 		
 		Un **template**:
 		
 		* Es un documento STXT cuyo namespace es `@stxt.template`.
 		* Se asocia a un **namespace objetivo**, de forma análoga a un schema.
 		* Describe la **estructura esperada** mediante un bloque `Structure >>` con sintaxis simplificada.
-		* Es **equivalente en información** a un schema: un template puede compilarse a un documento `@stxt.schema` con una representación interna equivalente.
+		* Es **equivalente en información** a un schema: un template puede compilarse a un documento `@stxt.schema` 
+		  con una representación interna equivalente. Aún así, un schema puede contener más información.
 		
 		Relación con `@stxt.schema`:
 		
 		* Un validador **PUEDE** soportar sólo schemas, sólo templates, o ambos.
-		* Si existen ambos (schema y template) para el mismo namespace objetivo, un validador conforme **DEBERÍA** priorizar `@stxt.schema` frente a `@stxt.template`.
+		* Si existen ambos (schema y template) para el mismo namespace objetivo, 
+		  un validador conforme **DEBERÍA** priorizar `@stxt.schema` frente a `@stxt.template`.
 		* STXT core **NO DEBE** imponer semántica: los templates son una capa opcional, posterior al parseo del documento STXT.
 		
 	Subheader: 2. Terminología
@@ -42,7 +45,7 @@ Document: STXT Plantillas (@stxt.template)
 	Content >>
 		La validación mediante templates ocurre **después** del parseo STXT:
 		
-		1. Parseo del documento STXT a estructura jerárquica.
+		1. Parseo del documento @STXT@ a estructura jerárquica.
 		2. Resolución del namespace lógico por herencia.
 		3. Selección del template correspondiente al namespace lógico.
 		4. Aplicación de reglas del template (estructura, cardinalidad, tipos, valores).
@@ -62,7 +65,7 @@ Document: STXT Plantillas (@stxt.template)
 		Template (@stxt.template): com.example.docs
 			Description: Template de ejemplo
 			Structure >>
-				Document:
+				Document (com.example.docs):
 					Title: (1)
 					Body: (1) TEXT
 					
@@ -88,8 +91,10 @@ Document: STXT Plantillas (@stxt.template)
 		El bloque `Structure >>` define un **árbol de plantillas de nodos** usando indentación, donde:
 		
 		* Cada línea no vacía define una **plantilla de nodo**.
-		* La indentación define nodos hijos (igual que STXT), pero **dentro de `Structure >>` no se está describiendo un documento de datos, sino una estructura esperada**.
-		* Las reglas de indentación del documento STXT base aplican al documento template (fuera del bloque) y al bloque `Structure >>` como texto literal; sin embargo, el contenido de `Structure >>` se interpreta por el sistema de templates con su propia gramática (sección 6.2).
+		* La indentación define nodos hijos (igual que @STXT@), pero **dentro de `Structure >>` no se está describiendo 
+		  un documento de datos, sino una estructura esperada**.
+		* Las reglas de indentación del documento @STXT@ base aplican al documento template (fuera del bloque)
+		  y al bloque `Structure >>` como texto literal; sin embargo, el contenido de `Structure >>` se interpreta por el sistema de templates con su propia gramática (sección 6.2).
 		
 	Subsubheader: 6.1 Convención de estilo recomendada
 	
@@ -189,7 +194,8 @@ Document: STXT Plantillas (@stxt.template)
 	Subheader: 8. Tipos
 	
 	Content >>
-		Los tipos en templates reutilizan el conjunto de tipos de STXT Schema, con la misma intención: validar forma del valor y, opcionalmente, su contenido.
+		Los tipos en templates reutilizan el conjunto de tipos de @STXT@ Schema, con la misma intención: validar forma del valor y, 
+		opcionalmente, su contenido.
 		
 		El tipo se especifica como una palabra tras la cardinalidad (si existe).
 		
@@ -213,7 +219,7 @@ Document: STXT Plantillas (@stxt.template)
 	Content >>
 		Un validador conforme **DEBE** aplicar estas reglas:
 		
-		* Tipos **BLOCK-only** (por ejemplo `BLOCK`, `TEXT`, `CODE`, `BASE64`, `JSON`, `XML`, `YAML`, `HTML`, `MARKDOWN`, etc.) **NO** son compatibles con hijos.
+		* Tipos **BLOCK-only** (por ejemplo `BLOCK`, `TEXT`, `BASE64`, etc.) **NO** son compatibles con hijos.
 		  Si un nodo plantilla tiene hijos en `Structure >>` y su tipo efectivo es BLOCK-only, el template **DEBE** considerarse inválido.
 		
 		* Tipos **GROUP** (o equivalentes estructurales sin valor) **SÍ** admiten hijos.
@@ -229,7 +235,8 @@ Document: STXT Plantillas (@stxt.template)
 		Un validador de templates:
 		
 		* **DEBE** soportar al menos: `INLINE`, `GROUP`, `BLOCK`, `TEXT`, `NUMBER`, `BOOLEAN`, `DATE`, `ENUM`.
-		* **DEBERÍA** soportar el resto de tipos definidos en STXT Schema (por ejemplo `INTEGER`, `NATURAL`, `TIME`, `TIMESTAMP`, `UUID`, `URL`, `EMAIL`, `BASE64`, etc.).
+		* **DEBERÍA** soportar el resto de tipos definidos en STXT Schema (por ejemplo `INTEGER`, `NATURAL`, 
+		  `TIME`, `TIMESTAMP`, `UUID`, `URL`, `EMAIL`, `BASE64`, etc.).
 		
 	Subheader: 9. ENUM y lista de valores
 	
@@ -264,27 +271,24 @@ Document: STXT Plantillas (@stxt.template)
 	Content >>
 		Reglas:
 		
-		* Si se omite namespace, el nodo plantilla pertenece al **namespace objetivo** del template.
-		* Si se especifica `(otro.ns)`, ese nodo plantilla pertenece a ese namespace.
-		* La herencia de namespace en templates **NO** funciona como en documentos STXT de datos:
-		  cada línea declara su namespace efectivo por:
-		  
-		  * namespace explícito en la línea, o
-		  * namespace objetivo del template si no hay override.
-		
-		Motivación:
-		
-		* En templates, el bloque `Structure` describe estructura esperada y referencias cross-namespace de forma explícita.
+		* Los documentos deben pertenecer al **namespace objetivo**, .
+		* La herencia de namespace funciona como en documentos STXT de datos, donde los namespace se heredan.
+		* Si se especifica `(otro.ns)`, ese nodo plantilla pertenece a ese otro namespace.
+		* Si se especifica `(otro.ns)` **NO DEBE** incluir ninguna otra información sobre ese nodo, sólo la cardinalidad, que además
+		  es opcional.
 		
 	Subheader: 11. Reglas de “nodos definidos”
 	
 	Content >>
-		En templates, un nodo existe si aparece en `Structure`. A diferencia de Schema, no existe una sección `Node:` separada; la propia estructura es la definición.
+		En templates, un nodo existe si aparece en `Structure`. A diferencia de Schema, no existe una sección `Node:` separada; 
+		la propia estructura es la definición.
 		
 		Regla de consistencia recomendada:
 		
-		* Si un template referencia nodos cross-namespace, un sistema de validación completo **DEBERÍA** disponer de template o schema correspondiente para ese namespace externo si se desea validar profundamente.
-		* Un validador **PUEDE** validar sólo cardinalidad/estructura del namespace objetivo y tratar nodos cross-namespace como “caja negra”, según configuración.
+		* Si un template referencia nodos cross-namespace, un sistema de validación completo **DEBERÍA** 
+		  disponer de template o schema correspondiente para ese namespace externo si se desea validar profundamente.
+		* Un validador **PUEDE** validar sólo cardinalidad/estructura del namespace objetivo y tratar nodos cross-namespace 
+		  como “caja negra”, según configuración.
 		
 	Subheader: 12. Compilación a Schema (equivalencia semántica)
 	
@@ -313,14 +317,14 @@ Document: STXT Plantillas (@stxt.template)
 	Content >>
 		Un template es inválido si ocurre cualquiera de estas condiciones:
 		
-		1. El documento no tiene raíz `Template (@stxt.template): <namespace_objetivo>`.
-		2. Falta `Structure >>` o `Structure` no es bloque `>>`.
-		3. Una línea no vacía dentro de `Structure` no contiene `:`.
-		4. Cardinalidad mal formada o con números inválidos.
-		5. Tipo desconocido (según el conjunto de tipos soportado por el validador).
-		6. Uso de `[...]` si el tipo no es `ENUM`.
-		7. Tipo BLOCK-only con hijos definidos en `Structure`.
-		8. Indentación inválida dentro de `Structure` (saltos de nivel, etc.).
+		1. El documento de `Structure>>` no es un documento válido @STXT@ (identación inválida, etc.)
+		2. El documento no tiene raíz `Template (@stxt.template): <namespace_objetivo>`.
+		3. Falta `Structure >>` o `Structure` no es bloque `>>`.
+		4. Una línea no vacía dentro de `Structure` no contiene `:`.
+		5. Cardinalidad mal formada o con números inválidos.
+		6. Tipo desconocido (según el conjunto de tipos soportado por el validador).
+		7. Uso de `[...]` si el tipo no es `ENUM`.
+		8. Tipo BLOCK-only con hijos definidos en `Structure`.
 		
 	Subheader: 14. Conformidad
 	
@@ -331,7 +335,8 @@ Document: STXT Plantillas (@stxt.template)
 		* Aplica las reglas de cardinalidad, tipos y ENUM.
 		* Aplica las reglas de compatibilidad de hijos por tipo.
 		* Rechaza templates inválidos según la sección 13.
-		* Define un criterio estable de selección de template (si existieran múltiples fuentes), sin aplicar más de uno simultáneamente por namespace objetivo.
+		* Define un criterio estable de selección de template (si existieran múltiples fuentes), 
+		  sin aplicar más de uno simultáneamente por namespace objetivo.
 		
 	Subheader: 15. Meta-template del propio sistema `@stxt.template`
 	
@@ -341,7 +346,7 @@ Document: STXT Plantillas (@stxt.template)
 	Code >>
 		Template (@stxt.template): @stxt.template
 			Structure >>
-				Template: (1)
+				Template (@stxt.template): (1)
 					Description: (0,1) TEXT
 					Structure: (1) BLOCK
 		
@@ -359,7 +364,7 @@ Document: STXT Plantillas (@stxt.template)
 		Template (@stxt.template): com.example.docs
 			Description: Plantilla simple
 			Structure >>
-				Document:
+				Document (com.example.docs):
 					Title: (1)
 					Author: (1)
 					Date: (1) DATE
@@ -370,7 +375,7 @@ Document: STXT Plantillas (@stxt.template)
 	Code >>
 		Template (@stxt.template): com.blog.post
 			Structure >>
-				Post:
+				Post (com.blog.post):
 					Title: (1)
 					Slug: (1)
 					Published: (1) BOOLEAN
@@ -386,7 +391,7 @@ Document: STXT Plantillas (@stxt.template)
 	Code >>
 		Template (@stxt.template): com.ui.theme
 			Structure >>
-				Theme:
+				Theme (com.ui.theme):
 					Name: (1)
 					Mode: (1) ENUM [light, dark]
 					Accent: (?) ENUM [blue, green, orange]
@@ -396,7 +401,7 @@ Document: STXT Plantillas (@stxt.template)
 	Code >>
 		Template (@stxt.template): com.example.docs
 			Structure >>
-				Document:
+				Document (com.example.docs):
 					Metadata (com.google.html): (?)
 					Content: (1) TEXT
 					

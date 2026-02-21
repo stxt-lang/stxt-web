@@ -748,7 +748,7 @@ Document: STXT (Semantic Text) — Documents
 	Code>>
 		Template (@stxt.template): com.example.docs
 			Structure >>
-				Email:
+				Email (com.example.docs):
 					From:
 					To:
 					Cc:
