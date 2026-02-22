@@ -2,8 +2,11 @@ Server (org.apache.tomcat):
 	Port: 8080
 	Shutdown command: SHUTDOWN
 	Service: 
-		Connector: 1
+		Connector:
 			Port: 8080
+			Protocol: http
+		Connector: 
+			Port: 8443
 			Protocol: https
 	Global Naming Resources: 
 		Resource: 
