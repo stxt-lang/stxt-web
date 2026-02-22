@@ -1,4 +1,4 @@
-Document: STXT Tutorial
+Document (dev.stxt.website): STXT Tutorial
 
 	Metadata:
 		Author: ChatGPT 5.2
@@ -236,7 +236,7 @@ Document: STXT Tutorial
 			Node: Content
 				Type: TEXT
 				
-	Content confirms >>
+	Content >>
 		* El schema es más verboso, pero más explícito.
 		* Un template puede compilarse automáticamente a esta forma.
 		* Un validador **DEBERÍA** priorizar schema frente a template si ambos existen.
