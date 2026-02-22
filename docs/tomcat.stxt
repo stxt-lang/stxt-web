@@ -1,0 +1,4 @@
+Server:
+	Port: 8080
+	Shutdown command: SHUTDOWN
+
