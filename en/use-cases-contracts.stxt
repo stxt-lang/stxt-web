@@ -1,45 +1,45 @@
-Document (dev.stxt.namespace):Contracts and legal agreements
+Document: Contracts and legal agreements
 
-	Metadata:
+	Metadata: 
 		Author: ChatGPT 5.2
 		Last modif: 2026-01-11
-		
+
 	Header: Contracts and legal agreements
-	
+
 	Content >>
 		This section **is not intended to replace** formal legal documents,
 		nor existing legal processes.
-		
+
 		The goal is to show how @STXT@ can be used as a
 		**readable and structured source format** for contracts, agreements,
 		and regulatory documents that:
-		
+
 		* must be read and understood by people,
 		* contain rules, conditions, and exceptions,
 		* and often coexist with technical or operational processes.
-		
+
 	Subheader: What types of documents
-	
+
 	Content >>
 		In this context, we are talking about:
-		
+
 		* Service provision contracts.
 		* Master agreements.
 		* SLAs (Service Level Agreements).
 		* NDAs (confidentiality agreements).
 		* Terms and conditions.
 		* Internal policies and corporate regulations.
-		
+
 		Many of these documents:
-		
+
 		* start out as “legal text”,
 		* but end up having a direct impact on operations, systems, or people.
-		
+
 	Subheader: Common problems in legal documents
-	
+
 	Content >>
 		In practice:
-		
+
 		* The text is long and dense.
 		* Important conditions are “buried” in paragraphs.
 		* Key data (dates, parties, amounts, deadlines) are not easily extractable.
@@ -48,22 +48,22 @@ Document (dev.stxt.namespace):Contracts and legal agreements
 		  * regulatory content,
 		  * contractual data,
 		  * and explanatory context.
-		
+
 		@STXT@ does not eliminate legal complexity,
 		but it **organizes the document**.
-		
+
 	Subheader: Example 1 — Simple agreement
-	
+
 	Content >>
 		A basic agreement between two parties, with legal text and explicit data.
-		
+
 	Code >>
 		Agreement (@com.acme.legal.contract):
 			Id: AGR-2026-001
 			Title: Service provision agreement
 			Status: Draft
 			Effective date: 2026-02-01
-			
+
 			Parties:
 				Party:
 					Name: ACME Corp
@@ -71,39 +71,39 @@ Document (dev.stxt.namespace):Contracts and legal agreements
 				Party:
 					Name: Example Ltd
 					Role: Client
-			
+
 			Purpose >>
 				This agreement governs the provision of technical support services
 				between the parties.
-			
+
 			Term:
 				Start: 2026-02-01
 				End: 2027-01-31
-			
+
 			Payment:
 				Fee: 12000
 				Currency: EUR
 				Billing period: Monthly
-			
+
 			Governing law: ES
-	
+
 	Subheader: What you gain with this structure
-	
+
 	Content >>
 		* The parties and dates are clear data.
 		* The legal text remains text, without “chopping it up”.
 		* The document is readable without technical knowledge.
-		
+
 	Subheader: Example 2 — Clauses as explicit sections
-	
+
 	Content >>
 		Clauses are a natural tree.
-		
+
 	Code >>
 		Agreement (@com.acme.legal.contract):
 			Id: AGR-2026-002
 			Title: Confidentiality agreement
-			
+
 			Clauses:
 				Clause:
 					Number: 1
@@ -111,35 +111,35 @@ Document (dev.stxt.namespace):Contracts and legal agreements
 					Text >>
 						Confidential information shall be understood as any
 						non-public information disclosed by either party.
-						
+
 				Clause:
 					Number: 2
 					Title: Confidentiality obligations
 					Text >>
 						The parties undertake not to disclose confidential
 						information to third parties without prior consent.
-						
+
 				Clause:
 					Number: 3
 					Title: Exceptions
 					Text >>
 						Information that is
 						in the public domain or required by law shall not be considered confidential.
-	
-	Subheader: Example 3 — SLA (service level agreement)
-	
+
+	Subheader (): Example 3 — SLA (service level agreement)
+
 	Content >>
 		An SLA mixes regulatory text with concrete metrics.
-		
+
 	Code >>
 		SLA (@com.acme.legal.sla):
 			Service: Payments platform
 			Effective date: 2026-03-01
-			
+
 			Availability:
 				Target percentage: 99.9
 				Measurement period: Monthly
-			
+
 			Response times:
 				Severity:
 					Level: Critical
@@ -147,43 +147,43 @@ Document (dev.stxt.namespace):Contracts and legal agreements
 				Severity:
 					Level: High
 					Max response minutes: 120
-			
+
 			Penalties:
 				Penalty:
 					Condition >>
 						Availability below the monthly target.
 					Consequence >>
 						10% discount on the monthly invoice.
-			
+
 			Legal text >>
 				The metrics will be measured in accordance with the procedures
 				described in the technical annex.
-	
+
 	Subheader: Example 4 — Exceptions and conditions
-	
+
 	Content >>
 		Contracts often have rules with exceptions.
-		
+
 	Code >>
 		Clause:
 			Title: Limitation of liability
 			Rule >>
 				Total liability shall not exceed the annual amount of the contract.
-			
+
 			Exceptions:
 				Exception >>
 					Such limitation shall not apply in cases of willful misconduct or gross negligence.
-	
+
 	Subheader: Example 5 — History and versions
-	
+
 	Content >>
 		Agreements evolve: amendments, renewals, revisions.
-		
+
 	Code >>
 		Agreement (@com.acme.legal.contract):
 			Id: AGR-2026-003
 			Title: Master agreement
-			
+
 			History:
 				Revision:
 					Date: 2026-01-15
@@ -191,35 +191,35 @@ Document (dev.stxt.namespace):Contracts and legal agreements
 				Revision:
 					Date: 2026-03-10
 					Summary: Update to payment clauses
-			
+
 			Current version: 2
-	
+
 	Subheader: Example 6 — Legal comments and internal notes
-	
+
 	Content >>
 		It is common to separate:
-		
+
 		* contractual text,
 		* internal notes,
 		* and legal observations.
-		
+
 	Code >>
 		Clause:
 			Title: Jurisdiction
-			
+
 			Text >>
 				The parties submit to the courts of Madrid.
-			
+
 			Internal notes >>
 				Standard clause approved by legal.
 				Do not modify without legal review.
-	
+
 	Subheader: Example 7 — Minimal template for agreements
-	
+
 	Content >>
 		A template can ensure that an agreement has
 		the essential elements, without imposing legal drafting.
-		
+
 	Code >>
 		Template (@stxt.template): com.acme.legal.contract
 			Description: Basic contract structure
@@ -229,42 +229,42 @@ Document (dev.stxt.namespace):Contracts and legal agreements
 					Title: (1)
 					Status: (1) ENUM [Draft, Signed, Terminated]
 					Effective date: (?)
-					
+
 					Parties: (1)
 						Party: (+)
 							Name: (1)
 							Role: (1)
-					
+
 					Purpose: (?) TEXT
 					Clauses: (?)
 						Clause: (*)
 							Title: (1)
 							Text: (1) TEXT
-					
+
 					History: (?)
-	
+
 	Subheader: Why this approach is useful
-	
+
 	Content >>
 		Using STXT as a source format for contracts allows:
-		
+
 		* Documents readable without special tools.
 		* Clear structure for human review.
 		* Automatic extraction of key data.
 		* Versioning and auditing via version control.
-		
+
 		Without turning the contract into code
 		or imposing an artificial formal language.
-		
+
 	Subheader: Summary
-	
+
 	Content >>
 		Contracts and legal agreements are, in essence:
-		
+
 		* regulatory text,
 		* with repeatable structure,
 		* and critical data.
-		
+
 		@STXT@ makes it possible to represent them clearly,
 		readably, and in a structured way,
 		respecting their human and legal nature.

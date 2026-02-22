@@ -1,59 +1,59 @@
-Document (dev.stxt.namespace):RFCs and technical proposals
+Document: RFCs and technical proposals
 
-	Metadata:
+	Metadata: 
 		Author: ChatGPT 5.2
 		Last modif: 2026-01-11
-		
+
 	Header: RFCs and technical proposals
-	
+
 	Content >>
 		RFCs (*Request for Comments*) and technical proposal documents
 		are a common tool for making design decisions
 		in an explicit, reviewable, and shared way.
-		
+
 		They are usually **long**, **argumentative**, and **living** documents,
 		combining narrative text with structured information.
-		
+
 	Assert >>
 		@STXT@ fits naturally as a source format for this type of document,
 		without changing the usual workflow.
-		
+
 	Subheader: What we mean here by RFC
-	
+
 	Content >>
 		In this context, “RFC” includes:
-		
+
 		* Internal technical proposals.
 		* Classic RFCs inspired by the IETF.
 		* ADRs (Architecture Decision Records, records of architecture decisions).
 		* Design documents prior to implementation.
-		
-		No specific process is assumed:  
+
+		No specific process is assumed:
 		the focus is on **the document**, not the methodology.
-		
+
 	Subheader: Common problems with current RFCs
-	
+
 	Content >>
 		In practice, these documents often:
-		
+
 		* Live in Markdown with implicit conventions.
 		* Mix metadata with free text without clear separation.
 		* Depend on human discipline to maintain structure.
 		* Be difficult to validate automatically.
-		
+
 		Even so, the workflow is usually good:
-		
+
 		* Plain text.
 		* Versioned in Git.
 		* Reviewed by diff.
-		
+
 		@STXT@ does not replace that workflow: it **reinforces** it.
-		
+
 	Subheader: Example 1 — Minimal RFC
-	
+
 	Content >>
 		A very small RFC, sufficient for initial discussion.
-		
+
 	Code >>
 		RFC (@com.acme.rfc):
 			Id: RFC-012
@@ -62,31 +62,31 @@ Document (dev.stxt.namespace):RFCs and technical proposals
 			Authors:
 				Author: Joan Costa
 			Created: 2026-01-11
-			
+
 			Context >>
 				Module X has latency problems under load.
 				Currently each instance queries the database
 				for repetitive operations.
-			
+
 			Proposal >>
 				Introduce a shared distributed cache layer
 				across instances to reduce database accesses.
-			
+
 			Decision >>
 				Pending evaluation.
-	
+
 	Subheader: What STXT brings here
-	
+
 	Content >>
 		* Long text lives in `>>` blocks, without restrictions.
 		* Metadata are clear nodes, not conventions.
 		* The RFC structure is visible at a glance.
-		
+
 	Subheader: Example 2 — More complete RFC
-	
+
 	Content >>
 		A realistic RFC with alternatives, impact, and risks.
-		
+
 	Code >>
 		RFC (@com.acme.rfc):
 			Id: RFC-013
@@ -96,19 +96,19 @@ Document (dev.stxt.namespace):RFCs and technical proposals
 				Author: Platform Team
 			Created: 2026-01-05
 			Updated: 2026-01-10
-			
+
 			Context >>
 				Currently there are multiple configuration formats
 				(JSON, YAML, properties) with different rules.
-			
+
 			Problem >>
 				The diversity of formats makes validation,
 				automation, and support difficult.
-			
+
 			Proposal >>
 				Adopt STXT as the single configuration format
 				for internal services.
-			
+
 			Alternatives:
 				Alternative:
 					Title: Keep current formats
@@ -116,98 +116,98 @@ Document (dev.stxt.namespace):RFCs and technical proposals
 						Zero initial cost.
 					Cons >>
 						Fragmentation remains.
-						
+
 				Alternative:
 					Title: Standardize on YAML
 					Pros >>
 						Existing tools.
 					Cons >>
 						Ambiguity and complex validation.
-			
+
 			Impact >>
 				Teams will need to gradually migrate their configurations.
-			
+
 			Risks >>
 				Initial resistance to change.
-			
+
 			Decision >>
 				Under architecture review.
-	
+
 	Subheader: Example 3 — Status evolution
-	
+
 	Content >>
 		An RFC usually changes status over time.
 		The status is explicit data, not a sentence in the text.
-		
+
 	Code >>
 		RFC (@com.acme.rfc):
 			Id: RFC-013
 			Title: Unification of the configuration system
 			Status: Accepted
 			Accepted date: 2026-01-18
-			
+
 			Decision >>
 				The progressive adoption of STXT is approved
 				as the standard configuration format.
-			
+
 			Consequences >>
 				* New services will use STXT.
 				* Existing ones will migrate incrementally.
-	
+
 	Subheader: Example 4 — Relationship between RFCs
-	
+
 	Content >>
 		It is common to reference other documents.
 		In STXT, these relationships can be explicit.
-		
+
 	Code >>
 		RFC (@com.acme.rfc):
 			Id: RFC-020
 			Title: Deprecation of the legacy system
 			Status: Draft
-			
+
 			Related:
 				RFC: RFC-013
 				RFC: RFC-007
-			
+
 			Context >>
 				This RFC depends on the adoption of the new configuration system
 				described in RFC-013.
-	
+
 	Subheader: Example 5 — Comments and review
-	
+
 	Content >>
 		An RFC can accumulate comments without mixing them
 		with the main text.
-		
+
 	Code >>
 		RFC (@com.acme.rfc):
 			Id: RFC-021
 			Title: New deployment pipeline
 			Status: Review
-			
+
 			Proposal >>
 				Unify CI/CD pipelines into a single definition.
-			
+
 			Comments:
 				Comment:
 					Author: Mery Adams
 					Date: 2026-01-12
 					Text >>
 						I’m concerned about the impact on teams with their own tooling.
-						
+
 				Comment:
 					Author: Keyla Brown
 					Date: 2026-01-13
 					Text >>
 						Has the migration cost been evaluated?
-	
+
 	Subheader: Example 6 — Minimal template for RFCs
-	
+
 	Content >>
 		If coherence is desired without rigidity, a lightweight template
 		can ensure that no RFC is incomplete.
-		
+
 	Code >>
 		Template (@stxt.template): com.acme.rfc
 			Description: Minimal structure for technical RFCs
@@ -218,47 +218,47 @@ Document (dev.stxt.namespace):RFCs and technical proposals
 					Status: (1) ENUM [Draft, Review, Accepted, Rejected, Deprecated]
 					Authors: (1)
 						Author: (+)
-					
+
 					Context: (1) TEXT
 					Proposal: (1) TEXT
 					Decision: (?) TEXT
-					
+
 					Alternatives: (?)
 						Alternative: (*)
 							Title: (1)
 							Pros: (?) TEXT
 							Cons: (?) TEXT
-					
+
 					Impact: (?) TEXT
 					Risks: (?) TEXT
 					Comments: (?)
-	
+
 	Subheader: Why this case fits especially well
-	
+
 	Content >>
 		RFCs are already:
-		
+
 		* Plain text.
 		* Versioned in Git.
 		* Reviewed by people.
-		
+
 		STXT adds:
-		
+
 		* Explicit structure.
 		* Processable metadata.
 		* Optional validation.
 		* Less dependence on implicit conventions.
-		
+
 		Without changing the nature of the document.
-		
+
 	Subheader: Summary
-	
+
 	Content >>
 		Using STXT for RFCs and technical proposals makes it possible to:
-		
+
 		* Write clear, well-argued documents.
 		* Keep structure visible and consistent.
 		* Facilitate review, automation, and traceability.
-		
+
 		All without turning the document
 		into a formal language or into code.
