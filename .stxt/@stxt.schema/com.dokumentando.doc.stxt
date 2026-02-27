@@ -21,3 +21,8 @@ Schema (@stxt.schema): com.dokumentando.doc
 	Node: Description
 		Type: TEXT
 	Node: Tipo Documento
+		Description >>
+			El tipo de documento és uno de los siguientes:
+			
+			* Informe
+			* Otro valor
