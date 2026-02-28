@@ -1,0 +1,28 @@
+Schema (@stxt.schema): demo.docs
+	Node: Documento
+		Children:
+			Child: Título
+				Min: 1
+				Max: 1
+			Child: Secciones
+			Child: Description
+				Min: 1
+				Max: 1
+			Child: Tipo Documento
+				Min: 1
+				Max: 1
+	Node: Secciones
+		Children:
+			Child: Sección
+				Min: 1
+	Node: Título 
+	Node: Sección
+		Type: TEXT
+	Node: Description
+		Type: TEXT
+	Node: Tipo Documento
+		Description >>
+			El tipo de documento és uno de los siguientes:
+			
+			* Informe
+			* Otro valor
