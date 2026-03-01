@@ -45,3 +45,11 @@ Template (@stxt.template): org.apache.tomcat
 						Prefix: (?)
 						Suffix: (?)
 						Pattern: (?)
+	Description >>
+		Server >>
+			Este nodo es el principal
+			de **todo**
+		JVM Route >>
+			Este nodo es la ruta a la JVM
+
+		
