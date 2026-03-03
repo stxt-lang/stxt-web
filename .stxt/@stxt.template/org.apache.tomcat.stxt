@@ -21,7 +21,7 @@ Template (@stxt.template): org.apache.tomcat
 					Min Spare Threads: (?) NUMBER
 				Connector: (+)
 					Port: (1) @Port
-					Protocol: (1)
+					Protocol: (1) ENUM [https, http]
 					Connection timeout: (?) INTEGER
 					Redirect Port: (?) INTEGER
 					Max Threads: (?) @Max Threads

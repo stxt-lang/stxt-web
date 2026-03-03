@@ -7,7 +7,7 @@ Server (org.apache.tomcat):
 			Protocol: http
 		Connector: 
 			Port: 8443
-			Protocol: https
+			Protocol: http
 	Global Naming Resources: 
 		Resource: 
 			Description: This is a description	
