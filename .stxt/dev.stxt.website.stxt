@@ -1,4 +1,7 @@
 Template (@stxt.template): dev.stxt.website
+	Description >>
+		Header >>
+			Equivalente a un h1 de html
 	Structure >>
 		Document (dev.stxt.website):
 			Metadata: (?)
