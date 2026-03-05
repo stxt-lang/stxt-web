@@ -1,5 +1,4 @@
 Template (@stxt.template): dev.stxt.website
-	Description: Plantilla base para páginas web STXT
 	Structure >>
 		Document (dev.stxt.website):
 			Metadata: (?)
