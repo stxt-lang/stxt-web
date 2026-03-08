@@ -1,0 +1,21 @@
+Page (com.acme.cms.page):
+	Title: Inicio
+	Slug: index
+	Status: Published
+	Content >>
+	
+	Blocks:
+		Block:
+			Type: hero
+			Title: STXT
+			Subtitle: Built for humans. Reliable for machines.
+		Block:
+			Type: features
+			Items:
+				Item: Legible
+				Item: Seguro
+				Item: Validable
+		Block:
+			Type: call-to-action
+			Label: Leer el tutorial
+			Target: /lang-tutorial

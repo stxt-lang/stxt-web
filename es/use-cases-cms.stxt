@@ -70,7 +70,7 @@ Document (dev.stxt.website): CMS (Content Management Systems)
 		Página típica con metadatos, secciones y contenido libre.
 		
 	Code >>
-		Page (@com.acme.cms.page):
+		Page (com.acme.cms.page):
 			Title: Sobre STXT
 			Slug: sobre-stxt
 			Language: es
@@ -112,7 +112,7 @@ Document (dev.stxt.website): CMS (Content Management Systems)
 		Un CMS suele trabajar con bloques o componentes.
 		
 	Code >>
-		Page (@com.acme.cms.page):
+		Page (com.acme.cms.page):
 			Title: Inicio
 			Slug: index
 			
@@ -145,7 +145,7 @@ Document (dev.stxt.website): CMS (Content Management Systems)
 		Un template evita páginas incompletas o incoherentes.
 		
 	Code >>
-		Template (@stxt.template): com.acme.cms.page
+		Template (stxt.template): com.acme.cms.page
 			Description: Página CMS estándar
 			Structure >>
 				Page:

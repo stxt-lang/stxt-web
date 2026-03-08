@@ -1,0 +1,23 @@
+Template (@stxt.template): com.acme.cms.page
+	Structure >>
+		Page:
+			Title: (1)
+			Slug: (1)
+			Language: (?) ENUM [es, en, fr]
+			Status: (1) ENUM [Draft, Published, Archived]
+			Layout: (?)
+			
+			SEO: (?)
+				Title: @Title
+				Description: (?)
+				Keywords: (?)
+					Keyword: (+)
+			
+			Header: (?) TEXT
+			Content: (1) TEXT
+			Footer: (?) TEXT
+			
+			Blocks: (?)
+				Block: (*)
+					Type: (1)
+	

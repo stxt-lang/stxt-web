@@ -1,0 +1,35 @@
+Page (com.acme.cms.page):
+	Title: Sobre STXT
+	Slug: sobre-stxt
+	Language: es
+	Status: Published
+	Layout: default
+	
+	SEO:
+		Title: STXT — Lenguaje Human First
+		Description: Formato textual legible y validable
+		Keywords:
+			Keyword: stxt
+			Keyword: documentos
+			Keyword: formatos
+	
+	Header >>
+		## STXT
+		
+		Lenguaje textual semántico, legible por humanos
+		y fiable para máquinas.
+	
+	Content >>
+		### ¿Qué es STXT?
+		
+		STXT es un lenguaje diseñado para escribir documentos
+		que pueden ser leídos y procesados sin fricción.
+		
+		### Principios
+		
+		- Human First
+		- Sintaxis mínima
+		- Validación opcional
+	
+	Footer >>
+		Última actualización: enero 2026
