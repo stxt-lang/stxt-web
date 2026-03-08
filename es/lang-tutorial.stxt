@@ -8,18 +8,19 @@ Document (dev.stxt.website): STXT Tutorial
 	
 	Subheader: 1. ¿Qué es @STXT@?
 	
-	Content >>
+	Assert >>
 		**@STXT@ (Semantic Text)** es un lenguaje textual jerárquico y semántico,
 		diseñado para ser **Human-First**:
-		
+
+	Content >>
 		* Fácil de leer y escribir por personas.
 		* Trivial de parsear por máquinas.
 		* Seguro por diseño.
 		
 		@STXT@ permite representar documentos estructurados mediante:
 		
-		* **Nodos INLINE** (`:`) para valores simples.
-		* **Nodos BLOCK** de texto literal** (`>>`) para contenido multilínea.
+			* **Nodos INLINE** (`:`) para valores simples.
+			* **Nodos BLOCK** de texto literal (`>>`) para contenido multilínea.
 		* **Indentación** para expresar jerarquía.
 		* **Namespaces** para separar semántica y permitir validación externa.
 		
@@ -31,17 +32,14 @@ Document (dev.stxt.website): STXT Tutorial
 	Subheader: Herramientas
 
 	Content >>
-		Para hacer el tutorial es muy recomendable descargar el proyecto donde están 
-		los documentos principales de este portal:
-
-		* Tutorial
-		* Ejemplos
-		* Portal web
-
-		Se puede descargar de github [Documentos STXT](https://github.com/stxt-lang/stxt-web)
-
-		Además, también es muy recomendable usar [Visual Studio Code](https://code.visualstudio.com/),
-		juntamente con el plugin oficial de **stxt-lang.stxt**.
+		* Repositorio del tutorial:
+		  [Documentos STXT](https://github.com/stxt-lang/stxt-web)
+		* Editor recomendado:
+		  [Visual Studio Code](https://code.visualstudio.com/)
+		* Extensión oficial:
+		  [STXT (stxt-lang.stxt)](https://marketplace.visualstudio.com/items?itemName=stxt-lang.stxt)
+		* Instalación rápida:
+		  `code --install-extension stxt-lang.stxt`
 
 	Subheader: 2. Ejemplo básico: ficha de un libro
 	
