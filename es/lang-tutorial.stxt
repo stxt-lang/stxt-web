@@ -44,10 +44,10 @@ Document (dev.stxt.website): STXT Tutorial
 	Subheader: 2. Ejemplo básico: ficha de un libro
 	
 	Content >>
-		Veamos un ejemplo sencillo de un documento @STXT@ que describe un libro.
+		Veamos un ejemplo sencillo de un documento @STXT@ que describe un libro (tutorial/book-raw.stxt).
 		No hay validación todavía: es sólo lenguaje @STXT@. Además, no tiene
 		ningún namespace asociado.
-		
+				
 	Code >>
 		Book:
 			Title: Arquitectura de software moderna
@@ -82,15 +82,27 @@ Document (dev.stxt.website): STXT Tutorial
 		lo redefina.
 		
 	Content >>
-		Ejemplo de un documento con namespace:
+		Ejemplo de un documento con namespace (tutorial/book-ns.stxt):
 		
 	Code >>
-		Book ***(com.acme.book)***:
+		Book (com.acme.book):
 			Title: Arquitectura de software moderna
 			Authors:
 				Author: María Pérez
 				Author: Juan García
 			ISBN: 978-84-123456-7-8
+			Publisher: ACME Editorial
+			Published: 2025-10-01
+			Summary >>
+				Este libro ofrece una visión práctica de patrones y buenas prácticas
+				para diseñar sistemas distribuidos y escalables.
+			Chapter: Introducción a la arquitectura
+				Content >>
+					En este capítulo presentamos conceptos básicos:
+					monolitos, microservicios y criterios de diseño.
+			Chapter: Comunicación entre servicios
+				Content >>
+					Se describen protocolos, mensajería y patrones de integración.
 	
 	Content >>
 		En este ejemplo vemos el nodo `Book` que pertenece al namespace `com.acme.book`.
@@ -136,7 +148,8 @@ Document (dev.stxt.website): STXT Tutorial
 	
 	Code >>
 		Template (@stxt.template): com.acme.book
-			Description: Template para fichas de libros editoriales
+			Description >>
+				Book: Template para fichas de libros editoriales
 			Structure >>
 				Book:
 					Title: (1)
@@ -252,7 +265,9 @@ Document (dev.stxt.website): STXT Tutorial
 	Content >>
 		* El schema es más verboso, pero más explícito.
 		* Un template puede compilarse automáticamente a esta forma.
-		* Un validador **DEBERÍA** priorizar schema frente a template si ambos existen.
+		* Un validador **DEBERÍA** establecer un criterio de prioridad si
+		  existen esquemas y templates de forma simultánea para un mismo namespace. **Sólo puede
+		  haber uno activo**.
 		
 	Subheader: 6. Documento final validable
 	

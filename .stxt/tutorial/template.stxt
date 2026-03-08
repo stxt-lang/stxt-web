@@ -1,0 +1,14 @@
+Template (@stxt.template): com.acme.book
+	Structure >>
+		Book:
+			Title: (1)
+			Authors: (1)
+				Author: (+)
+			ISBN: (1)
+			Publisher: (?)
+			Published: (?) DATE
+			Summary: (?) TEXT
+			Chapter: (+)
+				Content: (?) TEXT
+	Description >>
+		Book: Template para fichas de libros editoriales
