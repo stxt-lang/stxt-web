@@ -18,16 +18,31 @@ Document (dev.stxt.website): STXT Tutorial
 		
 		@STXT@ permite representar documentos estructurados mediante:
 		
-		* **Nodos inline** (`:`) para valores simples.
-		* **Bloques de texto literal** (`>>`) para contenido multilínea.
+		* **Nodos INLINE** (`:`) para valores simples.
+		* **Nodos BLOCK** de texto literal** (`>>`) para contenido multilínea.
 		* **Indentación** para expresar jerarquía.
 		* **Namespaces** para separar semántica y permitir validación externa.
 		
 		La sintaxis base es mínima. La semántica avanzada se añade mediante:
 		
 		* `@stxt.schema` — validación formal y exhaustiva.
-		* `@stxt.template` — validación simplificada y orientada a prototipos.
-		
+		* `@stxt.template` — validación mediante plantillas de estructura, orientada a prototipos.
+	
+	Subheader: Herramientas
+
+	Content >>
+		Para hacer el tutorial es muy recomendable descargar el proyecto donde están 
+		los documentos principales de este portal:
+
+		* Tutorial
+		* Ejemplos
+		* Portal web
+
+		Se puede descargar de github [Documentos STXT](https://github.com/stxt-lang/stxt-web)
+
+		Además, también es muy recomendable usar [Visual Studio Code](https://code.visualstudio.com/),
+		juntamente con el plugin oficial de **stxt-lang.stxt**.
+
 	Subheader: 2. Ejemplo básico: ficha de un libro
 	
 	Content >>
