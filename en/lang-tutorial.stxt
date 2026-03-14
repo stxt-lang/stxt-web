@@ -8,33 +8,46 @@ Document (dev.stxt.website): STXT Tutorial
 	
 	Subheader: 1. What is @STXT@?
 	
-	Content >>
+	Assert >>
 		**@STXT@ (Semantic Text)** is a hierarchical and semantic textual language,
 		designed to be **Human-First**:
-		
+
+	Content >>
 		* Easy to read and write by people.
 		* Trivial to parse by machines.
 		* Secure by design.
 		
 		@STXT@ allows representing structured documents through:
 		
-		* **Inline nodes** (`:`) for simple values.
-		* **Literal text blocks** (`>>`) for multiline content.
+			* **INLINE nodes** (`:`) for simple values.
+			* **BLOCK nodes** of literal text (`>>`) for multiline content.
 		* **Indentation** to express hierarchy.
 		* **Namespaces** to separate semantics and allow external validation.
 		
 		The base syntax is minimal. Advanced semantics are added through:
 		
 		* `@stxt.schema` — formal and exhaustive validation.
-		* `@stxt.template` — simplified and prototype-oriented validation.
-		
+		* `@stxt.template` — validation through structure templates, prototype-oriented.
+	
+	Subheader: Tools
+
+	Content >>
+		* Tutorial repository:
+		  [STXT Documents](https://github.com/stxt-lang/stxt-web)
+		* Recommended editor:
+		  [Visual Studio Code](https://code.visualstudio.com/)
+		* Official extension:
+		  [STXT (stxt-lang.stxt)](https://marketplace.visualstudio.com/items?itemName=stxt-lang.stxt)
+		* Quick install:
+		  `code --install-extension stxt-lang.stxt`
+
 	Subheader: 2. Basic example: a book record
 	
 	Content >>
-		Let’s look at a simple example of an @STXT@ document that describes a book.
-		There is no validation yet: it is only @STXT@ language. Also, it has
+		Let's look at a simple example of an @STXT@ document that describes a book (tutorial/book-raw.stxt).
+		There is no validation yet: it's only the @STXT@ language. Also, it has
 		no associated namespace.
-		
+				
 	Code >>
 		Book:
 			Title: Modern software architecture
@@ -59,30 +72,42 @@ Document (dev.stxt.website): STXT Tutorial
 		
 		* The hierarchy is defined **only by indentation**.
 		* `Summary >>` and `Content >>` are literal text blocks: their content is not interpreted as @STXT@.
-		* There is no implicit type: everything is text unless it is validated.
+		* There is no implicit type: everything is text unless validated.
 		
 	Subheader: 3. Using namespaces
 	
 	Assert >>
-		Namespaces allow grouping nodes into categories. Also, if a namespace is defined
-		for a node, **child nodes inherit the parent’s namespace**, unless one of them
+		Namespaces allow grouping nodes into categories. Also, if a
+		namespace is defined for a node, **child nodes inherit the parent's namespace**, unless one of them
 		redefines it.
 		
 	Content >>
-		Example of a document with a namespace:
+		Example of a document with a namespace (tutorial/book-ns.stxt):
 		
 	Code >>
-		Book ***(com.acme.book)***:
+		Book (com.acme.book):
 			Title: Modern software architecture
 			Authors:
 				Author: María Pérez
 				Author: Juan García
 			ISBN: 978-84-123456-7-8
+			Publisher: ACME Publishing
+			Published: 2025-10-01
+			Summary >>
+				This book offers a practical view of patterns and best practices
+				for designing distributed and scalable systems.
+			Chapter: Introduction to architecture
+				Content >>
+					In this chapter we present basic concepts:
+					monoliths, microservices, and design criteria.
+			Chapter: Communication between services
+				Content >>
+					Protocols, messaging, and integration patterns are described.
 	
 	Content >>
 		In this example we see the `Book` node that belongs to the `com.acme.book` namespace.
-		In addition, we also see nodes `Title`, `Authors`, `Author`, and `ISBN`, which, being
-		descendants of `Book`, also inherit the `com.acme.book` namespace.
+		In addition, we also see `Title`, `Authors`, `Author`, and `ISBN` nodes, which as
+		descendants of `Book` also inherit the `com.acme.book` namespace.
 		
 		Key rules:
 		
@@ -102,7 +127,7 @@ Document (dev.stxt.website): STXT Tutorial
 	Subsubheader: 3.2 Document validation
 	
 	Content >>
-		To be able to semantically validate a document, it must be associated with a **namespace**.
+		In order to semantically validate a document, it must be associated with a **namespace**.
 		Once it has the namespace, a schema (`@stxt.schema`)
 		or template (`@stxt.template`) is used to validate it. Validations are extensions
 		to the base language, which parsers may or may not implement.
@@ -123,7 +148,8 @@ Document (dev.stxt.website): STXT Tutorial
 	
 	Code >>
 		Template (@stxt.template): com.acme.book
-			Description: Template for publishing book records
+			Description >>
+				Book: Template for publishing book records
 			Structure >>
 				Book:
 					Title: (1)
@@ -146,7 +172,21 @@ Document (dev.stxt.website): STXT Tutorial
 		* `Summary` and `Content` are text blocks (`TEXT`).
 		* There must be at least one `Chapter`.
 		
-	Subsubheader: 4.2 Applying the template
+	Subsubheader: 4.2 Allowed forms for numbering
+	
+	Content >>
+		
+		| Form       | Meaning                      |
+		|------------|------------------------------|
+		| `num`      | Exactly `num`.               |
+		| `*`        | Any number (`0..∞`).         |
+		| `+`        | One or more (`1..∞`).        |
+		| `?`        | Zero or one (`0..1`).        |
+		| `num+`     | `num` or more (`num..∞`).    |
+		| `num-`     | Up to `num` (`0..num`).      |
+		| `min,max`  | Between `min` and `max`.     |
+	
+	Subsubheader: 4.3 Applying the template
 	
 	Content >>
 		A validator that supports templates must:
@@ -155,8 +195,9 @@ Document (dev.stxt.website): STXT Tutorial
 		* Check cardinalities.
 		* Validate basic types (number, date, boolean, text).
 		
-		The @STXT@ language **does not change**: the template is applied over the already-parsed tree.
+		The @STXT@ language **does not change**: the template is applied over the already parsed tree.
 		Depending on the parser, it may validate at the same time it parses the content.
+		
 		
 	Subheader: 5. Validation with Schemas
 	
@@ -224,12 +265,14 @@ Document (dev.stxt.website): STXT Tutorial
 	Content >>
 		* The schema is more verbose, but more explicit.
 		* A template can be automatically compiled into this form.
-		* A validator **SHOULD** prioritize schema over template if both exist.
+		* A validator **SHOULD** establish a priority criterion if
+		  schemas and templates exist simultaneously for the same namespace. **There can only
+		  be one active**.
 		
 	Subheader: 6. Final validatable document
 	
 	Content >>
-		Complete @STXT@ document that can be validated with the previous template or schema:
+		Complete @STXT@ document that can be validated with the template or the schema above:
 		
 	Code >>
 		Book (@com.acme.book):
