@@ -224,7 +224,7 @@ Document (dev.stxt.website): STXT (Semantic Text) — Documentos
 		* La línea del nodo `>>` **NO DEBE** contener contenido significativo tras `>>`, excepto espacios opcionales.
 		* Todas las líneas con indentación **estrictamente mayor** que la del nodo `>>` pertenecen al **contenido textual del bloque**.
 		* Dentro del bloque:
-		  * El parser **NO DEBE** interpretar ninguna línea como nodo estructurado, aunque contenga `:` u otra sintaxis de STXT.
+		  * El parser **NO DEBE** interpretar ninguna línea como nodo estructurado, aunque contenga `:` u otra sintaxis de @STXT@.
 		  * El parser **NO DEBE** interpretar líneas que comienzan por `#` como comentarios; todas las líneas son texto literal.
 		* El bloque termina cuando aparece una **línea no vacía** cuya indentación es **menor o igual** que la indentación del nodo `>>`.
 		* Una línea de comentario con indentación **menor o igual** que la del nodo `>>` está **fuera del bloque** y se procesa como comentario normal.
@@ -278,7 +278,7 @@ Document (dev.stxt.website): STXT (Semantic Text) — Documentos
 	Subsubheader: 8.1 Indentación Permitida
 		
 	Content >>
-		Un documento STXT:
+		Un documento @STXT@:
 		
 		* **PUEDE** usar espacios o tabuladores para indentación.
 		* **No se recomienda** mezclar espacios y tabuladores en una misma línea. Un parser **PUEDE** emitir un aviso en ese caso.
@@ -512,7 +512,7 @@ Document (dev.stxt.website): STXT (Semantic Text) — Documentos
 	Subheader: 12. Conformidad
 		
 	Content >>
-		Una implementación STXT es conforme si:
+		Una implementación @STXT@ es conforme si:
 		
 		* Implementa la sintaxis descrita en este documento.
 		* Aplica las reglas estrictas de indentación y jerarquía.
@@ -527,7 +527,7 @@ Document (dev.stxt.website): STXT (Semantic Text) — Documentos
 	Subsubheader: 13.1 Extensión de Archivo
 		
 	Content >>
-		Los documentos STXT **DEBERÍAN** usar la extensión: `.stxt`
+		Los documentos @STXT@ **DEBERÍAN** usar la extensión: `.stxt`
 		
 	Subsubheader: 13.2 Media Type (MIME)
 		
@@ -584,7 +584,7 @@ Document (dev.stxt.website): STXT (Semantic Text) — Documentos
 		* **Inmune a ejecución de código arbitrario**: no existen características dinámicas, tags personalizados, 
 		  loaders ni deserialización de objetos. La única estructura resultante es un árbol simple de nodos y valores textuales.
 		* **Inmune a inyección dentro de bloques literales**: todo contenido dentro de un nodo `>>` se trata 
-		  como texto literal sin interpretación alguna, incluso si contiene `:`, `>>`, `#` u otra sintaxis STXT.
+		  como texto literal sin interpretación alguna, incluso si contiene `:`, `>>`, `#` u otra sintaxis @STXT@.
 		* **Bajo riesgo de denegación de servicio**: las reglas estrictas de indentación consecutiva 
 		  y la ausencia de referencias circulares o anchors limitan la complejidad estructural. 
 		  Las implementaciones **DEBERÍAN** imponer un límite razonable de profundidad de anidamiento (recomendado: ≤ 100 niveles) 
@@ -592,7 +592,7 @@ Document (dev.stxt.website): STXT (Semantic Text) — Documentos
 		* **Schemas externos opcionales**: la validación semántica es una capa separada. 
 		  Un parser básico **PUEDE** operar sin cargar schemas externos, eliminando riesgos asociados a su resolución.
 		
-		En consecuencia, STXT es especialmente adecuado para procesar documentos de fuentes no confiables 
+		En consecuencia, @STXT@ es especialmente adecuado para procesar documentos de fuentes no confiables 
 		(configuraciones remotas, entradas de usuario, intercambio de datos) donde la seguridad del parser es crítica.
 		
 		Las implementaciones **DEBEN** rechazar documentos inválidos según la sección 11 
@@ -657,15 +657,15 @@ Document (dev.stxt.website): STXT (Semantic Text) — Documentos
 	Subheader: 17. Apéndice B — Interacción con `@stxt.schema`
 		
 	Content >>
-		El sistema de schemas permite añadir validación semántica a documentos STXT **sin modificar la sintaxis base** del lenguaje.
+		El sistema de schemas permite añadir validación semántica a documentos @STXT@ **sin modificar la sintaxis base** del lenguaje.
 		
-		El núcleo STXT no define cómo debe reaccionar una implementación: el comportamiento pertenece exclusivamente al sistema de schemas (*STXT-SCHEMA-SPEC*).
+		El núcleo @STXT@ no define cómo debe reaccionar una implementación: el comportamiento pertenece exclusivamente al sistema de schemas (*STXT-SCHEMA-SPEC*).
 		
-		Un schema es un documento STXT cuyo namespace es: `@stxt.schema`
+		Un schema es un documento @STXT@ cuyo namespace es: `@stxt.schema`
 		
 		y cuyo objetivo es definir las reglas estructurales, tipos de valor y cardinalidades de los nodos pertenecientes a un namespace concreto.
 		
-		El núcleo STXT **no interpreta** estas reglas; únicamente define cómo se expresan y cómo se combinan mediante namespaces.
+		El núcleo @STXT@ **no interpreta** estas reglas; únicamente define cómo se expresan y cómo se combinan mediante namespaces.
 		
 	Subsubheader: 17.1. Asociación de un schema a un namespace
 		
