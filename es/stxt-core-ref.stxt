@@ -425,7 +425,7 @@ Document (dev.stxt.website): STXT (Semantic Text) — Documentos
 	Content >>
 		Esta sección define cómo deben normalizarse los espacios en blanco para 
 		garantizar que distintas implementaciones produzcan la misma representación 
-		lógica a partir del mismo texto STXT.
+		lógica a partir del mismo texto @STXT@.
 		
 	Subsubheader: 10.1 Valores inline (`:`)
 		
@@ -695,7 +695,7 @@ Document (dev.stxt.website): STXT (Semantic Text) — Documentos
 			Node: Body Content
 				Type: TEXT
 		
-	Subsubheader: 17.2. Aplicación a documentos STXT
+	Subsubheader: 17.2. Aplicación a documentos @STXT@
 		
 	Content >>
 		Un documento que declare el mismo namespace:
@@ -708,7 +708,7 @@ Document (dev.stxt.website): STXT (Semantic Text) — Documentos
 	
 	Content >>
 		
-		puede ser validado por una implementación que soporte schemas STXT:
+		puede ser validado por una implementación que soporte schemas @STXT@:
 		
 		* Validando la presencia de nodos según `Node` del schema.
 		* Validando tipos de valor (`TEXT`, `DATE`, `NUMBER`, etc.).
@@ -717,8 +717,8 @@ Document (dev.stxt.website): STXT (Semantic Text) — Documentos
 	Subsubheader: 17.3. Independencia del núcleo
 		
 	Content >>
-		STXT **NO DEBE** imponer reglas semánticas provenientes de schemas.
-		El sistema de schemas es un componente separado y opcional que opera **sobre** el STXT ya parseado.
+		@STXT@ **NO DEBE** imponer reglas semánticas provenientes de schemas.
+		El sistema de schemas es un componente separado y opcional que opera **sobre** el @STXT@ ya parseado.
 		
 		También **PUEDE** actuar como parte del proceso de parseo. En ese caso **DEBERÍA** estar débilmente acoplado con él. 
 		Esto permitiría detectar errores sin tener que esperar al final del parseo.
@@ -726,11 +726,11 @@ Document (dev.stxt.website): STXT (Semantic Text) — Documentos
 	Subheader: 18. Apéndice C — Interacción con `@stxt.template`
 
 	Content>>	
-		El sistema de templates permite añadir validación semántica a documentos STXT **sin modificar la sintaxis base** del lenguaje.
+		El sistema de templates permite añadir validación semántica a documentos @STXT@ **sin modificar la sintaxis base** del lenguaje.
 		
-		El núcleo STXT no define cómo debe reaccionar una implementación: el comportamiento pertenece exclusivamente al sistema de templates (*STXT-TEMPLATE-SPEC*).
+		El núcleo @STXT@ no define cómo debe reaccionar una implementación: el comportamiento pertenece exclusivamente al sistema de templates (*STXT-TEMPLATE-SPEC*).
 		
-		Un template es un documento STXT cuyo namespace es: `@stxt.template`
+		Un template es un documento @STXT@ cuyo namespace es: `@stxt.template`
 		
 		y cuyo objetivo es definir las reglas estructurales, tipos de valor y cardinalidades de los nodos pertenecientes a un namespace concreto.
 		
@@ -759,7 +759,9 @@ Document (dev.stxt.website): STXT (Semantic Text) — Documentos
 					
 	Content>>
 		Una vez declarado, los templates cumplen la misma función que los schemas.
-		Un validador estándar **DEBERÍA** priorizar un schema por encima de un template.  
+		Un validador estándar **DEBERÍA** establecer un sistema claro de prioridades en caso de tener
+		varios esquemas y templates para un mismo namespace. Sólo es posible aplicar un schema o template
+		a un documento.
 	
 	Subheader: 19. Fin del Documento
 			
