@@ -11,11 +11,7 @@ Page (com.acme.cms.page):
 			Subtitle: Built for humans. Reliable for machines.
 		Block:
 			Type: features
-			Items:
-				Item: Legible
-				Item: Seguro
-				Item: Validable
+			Title: Hello
 		Block:
 			Type: call-to-action
-			Label: Leer el tutorial
-			Target: /lang-tutorial
+			Title: Hello2
