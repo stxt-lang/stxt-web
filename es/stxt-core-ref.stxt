@@ -758,10 +758,10 @@ Document (dev.stxt.website): STXT (Semantic Text) — Documentos
 					Metadata (com.google): (?)
 					
 	Content>>
-		Una vez declarado, los templates cumplen la misma función que los schemas.
-		Un validador estándar **DEBERÍA** establecer un sistema claro de prioridades en caso de tener
-		varios esquemas y templates para un mismo namespace. Sólo es posible aplicar un schema o template
-		a un documento.
+		Una vez definido, un template cumple la misma función que un schema.
+		Si una implementación encuentra varios schemas o templates aplicables al mismo namespace,
+		**DEBERÍA** definir una política de prioridad clara y determinista.
+		Para una validación concreta, **DEBERÍA** seleccionarse un único schema o template efectivo.
 	
 	Subheader: 19. Fin del Documento
 			
