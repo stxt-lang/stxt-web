@@ -48,13 +48,13 @@ Document (dev.stxt.website): STXT @stxt.schema — Especificación del Lenguaje 
 		    Node: Document
 		        Type: GROUP
 		        Children:
-		        	Child: Metadata (@com.google.html)
-		        		Max: 1
 		        	Child: Autor
 		        	Child: Fecha
 		        		Max: 1
 		        	Child: Content
 		        		Min: 1
+		        		Max: 1
+		        	Child: Metadata (com.google.html)
 		        		Max: 1
 		    Node: Autor
 		    Node: Fecha
