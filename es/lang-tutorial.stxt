@@ -19,8 +19,8 @@ Document (dev.stxt.website): STXT Tutorial
 		
 		@STXT@ permite representar documentos estructurados mediante:
 		
-			* **Nodos INLINE** (`:`) para valores simples.
-			* **Nodos BLOCK** de texto literal (`>>`) para contenido multilínea.
+		* **Nodos INLINE** (`:`) para valores simples.
+		* **Nodos BLOCK** de texto literal (`>>`) para contenido multilínea.
 		* **Indentación** para expresar jerarquía.
 		* **Namespaces** para separar semántica y permitir validación externa.
 		
